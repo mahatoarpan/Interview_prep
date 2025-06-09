@@ -149,6 +149,7 @@ Replication is an availability pattern that involves having multiple copies of t
 Availability is often quantified by uptime (or downtime) as a percentage of time the service is available. Availability is generally measured in number of 9s--a service with 99.99% availability is described as having four 9s.
 
 ### 99.9% Availability - Three 9s:
+
 | Duration          | Acceptable       |
 | :---------------- | :-----------     | 
 | Downtime per year |  8h 41min 38s    |
@@ -158,6 +159,7 @@ Availability is often quantified by uptime (or downtime) as a percentage of time
 
 
 ### 99.99% Availability - Four 9s:
+
 | Duration          | Acceptable     |
 | :---------------- | :-----------   | 
 | Downtime per year |  52min 9.8s    |
@@ -188,5 +190,63 @@ If both Foo and Bar each had 99.9% availability, their total availability in par
 #### Additional Resources
 * [Availability in System Design](https://www.enjoyalgorithms.com/blog/availability-system-design-concept)
 
+## Background Jobs
+
+Background jobs in system design refer to tasks that are executed in the background, independently of the main execution flow of the system. These tasks are typically initiated by the system itself, rather than by a user or another external agent.
+
+Background jobs can be used for a variety of purposes, such as:
+* Performing maintenance tasks: such as cleaning up old data, generating reports, or backing up the database.
+* Processing large volumes of data: such as data import, data export, or data transformation.
+* Sending notifications or messages: such as sending email notifications or push notifications to users.
+* Performing long-running computations: such as machine learning or data analysis.
+
+### Event Driven
+
+Event-driven invocation uses a trigger to start the background task. Examples of using event-driven triggers include:
+
+* The UI or another job places a message in a queue. The message contains data about an action that has taken place, such as the user placing an order. The background task listens on this queue and detects the arrival of a new message. It reads the message and uses the data in it as the input to the background job. This pattern is known as asynchronous message-based communication.
+* The UI or another job saves or updates a value in storage. The background task monitors the storage and detects changes. It reads the data and uses it as the input to the background job.
+* The UI or another job makes a request to an endpoint, such as an HTTPS URI, or an API that is exposed as a web service. It passes the data that is required to complete the background task as part of the request. The endpoint or web service invokes the background task, which uses the data as its input.
+
+### Schedule Driven
+
+Schedule-driven invocation uses a timer to start the background task. Examples of using schedule-driven triggers include:
+
+* A timer that is running locally within the application or as part of the application's operating system invokes a background task on a regular basis.
+* A timer that is running in a different application, such as Azure Logic Apps, sends a request to an API or web service on a regular basis. The API or web service invokes the background task.
+* A separate process or application starts a timer that causes the background task to be invoked once after a specified time delay, or at a specific time.
+
+Typical examples of tasks that are suited to schedule-driven invocation include batch-processing routines (such as updating related-products lists for users based on their recent behavior), routine data processing tasks (such as updating indexes or generating accumulated results), data analysis for daily reports, data retention cleanup, and data consistency checks.
+
+### Returning Results
+
+Background jobs execute asynchronously in a separate process, or even in a separate location, from the UI or the process that invoked the background task. Ideally, background tasks are "fire and forget" operations, and their execution progress has no impact on the UI or the calling process. This means that the calling process does not wait for completion of the tasks. Therefore, it cannot automatically detect when the task ends.
+
+#### Additional Resources
+* [Background Jobs - Best Practices](https://learn.microsoft.com/en-us/azure/architecture/best-practices/background-jobs)
 
 
+## Domain Name System (DNS)
+
+A Domain Name System (DNS) translates a domain name such as www.example.com to an IP address.
+
+DNS is hierarchical, with a few authoritative servers at the top level. Your router or ISP provides information about which DNS server(s) to contact when doing a lookup. Lower level DNS servers cache mappings, which could become stale due to DNS propagation delays. DNS results can also be cached by your browser or OS for a certain period of time, determined by the time to live (TTL).
+
+* NS record (name server) - Specifies the DNS servers for your domain/subdomain.
+* MX record (mail exchange) - Specifies the mail servers for accepting messages.
+* A record (address) - Points a name to an IP address.
+* CNAME (canonical) - Points a name to another name or CNAME (example.com to www.example.com) or to an A record.
+
+Services such as CloudFlare and Route53 provide managed DNS services. Some DNS services can route traffic through various methods:
+
+* Weighted Round Robin
+  * Prevent traffic from going to servers under maintenance
+  * Balance between varying cluster sizes
+  * A/B testing
+* Latency Based
+* Geolocation Based
+
+#### Additional Resources
+* [Comparing Load Balancing Algorithms](https://www.jscape.com/blog/load-balancing-algorithms)
+* [Choosing a routing policy](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html#routing-policy-latency)
+* [What is DNS? | How DNS works](https://www.cloudflare.com/learning/dns/what-is-dns/)
