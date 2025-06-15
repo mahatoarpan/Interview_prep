@@ -367,7 +367,93 @@ Picking the right database for a system is an important decision, as it can have
 * **Data Integrity:** Different databases have different capabilities for maintaining data integrity, such as enforcing constraints, and can have different levels of data security.
 * **Support and maintenance:** Some databases have more active communities and better documentation, making it easier to find help and resources.
 
+### SQL vs noSQL
+
+SQL databases, such as MySQL and PostgreSQL, are best suited for structured, relational data and use a fixed schema. They provide robust ACID (Atomicity, Consistency, Isolation, Durability) transactions and support complex queries and joins.
+
+NoSQL databases, such as MongoDB and Cassandra, are best suited for unstructured, non-relational data and use a flexible schema. They provide high scalability and performance for large amounts of data and are often used in big data and real-time web applications.
+
+The choice between SQL and NoSQL depends on the specific use case and requirements of the project. If you need to store and query structured data with complex relationships, an SQL database is likely a better choice. If you need to store and query large amounts of unstructured data with high scalability and performance, a NoSQL database may be a better choice.
+
+### Relational Database Management System (RDBMS)
+
+#### Replication
+Replication is the process of copying data from one database to another. Replication is used to increase availability and scalability of databases. There are two types of replication: master-slave and master-master.
+
+* **Master-slave Replication:** The master serves reads and writes, replicating writes to one or more slaves, which serve only reads. Slaves can also replicate to additional slaves in a tree-like fashion. If the master goes offline, the system can continue to operate in read-only mode until a slave is promoted to a master or a new master is provisioned.
+
+* **Master-master Replication:** Both masters serve reads and writes and coordinate with each other on writes. If either master goes down, the system can continue to operate with both reads and writes.
+
+#### Sharding
+Sharding distributes data across different databases such that each database can only manage a subset of the data. Taking a users database as an example, as the number of users increases, more shards are added to the cluster.
+
+Similar to the advantages of federation, sharding results in less read and write traffic, less replication, and more cache hits. Index size is also reduced, which generally improves performance with faster queries. If one shard goes down, the other shards are still operational, although you'll want to add some form of replication to avoid data loss. Like federation, there is no single central master serializing writes, allowing you to write in parallel with increased throughput.
+
+#### Federation
+Federation (or functional partitioning) splits up databases by function. For example, instead of a single, monolithic database, you could have three databases: forums, users, and products, resulting in less read and write traffic to each database and therefore less replication lag. Smaller databases result in more data that can fit in memory, which in turn results in more cache hits due to improved cache locality. With no single central master serializing writes you can write in parallel, increasing throughput.
+
+#### Denormalization
+Denormalization attempts to improve read performance at the expense of some write performance. Redundant copies of the data are written in multiple tables to avoid expensive joins. Some RDBMS such as PostgreSQL and Oracle support materialized views which handle the work of storing redundant information and keeping redundant copies consistent.
+
+Once data becomes distributed with techniques such as federation and sharding, managing joins across data centers further increases complexity. Denormalization might circumvent the need for such complex joins.
+
+#### SQL Tuning
+SQL tuning is the attempt to diagnose and repair SQL statements that fail to meet a performance standard. It's important to benchmark and profile to simulate and uncover bottlenecks.
+
+* Benchmark - Simulate high-load situations with tools such as ab.
+* Profile - Enable tools such as the slow query log to help track performance issues.
+
+### NoSQL
+
+#### Key-Value Store
+A key-value store generally allows for O(1) reads and writes and is often backed by memory or SSD. Data stores can maintain keys in lexicographic order, allowing efficient retrieval of key ranges. Key-value stores can allow for storing of metadata with a value.
+
+Key-value stores provide high performance and are often used for simple data models or for rapidly-changing data, such as an in-memory cache layer. Since they offer only a limited set of operations, complexity is shifted to the application layer if additional operations are needed.
+
+#### Document Store
+document store is centered around documents (XML, JSON, binary, etc), where a document stores all information for a given object. Document stores provide APIs or a query language to query based on the internal structure of the document itself. Note, many key-value stores include features for working with a value's metadata, blurring the lines between these two storage types.
+
+Based on the underlying implementation, documents are organized by collections, tags, metadata, or directories. Although documents can be organized or grouped together, documents may have fields that are completely different from each other.
+
+#### Wide Column Store
+A wide column store's basic unit of data is a column (name/value pair). A column can be grouped in column families (analogous to a SQL table). Super column families further group column families. You can access each column independently with a row key, and columns with the same row key form a row. Each value contains a timestamp for versioning and for conflict resolution.
+
+Google introduced Bigtable as the first wide column store, which influenced the open-source HBase often-used in the Hadoop ecosystem, and Cassandra from Facebook. Stores such as BigTable, HBase, and Cassandra maintain keys in lexicographic order, allowing efficient retrieval of selective key ranges.
+
+#### Graph 
+In a graph database, each node is a record and each arc is a relationship between two nodes. Graph databases are optimized to represent complex relationships with many foreign keys or many-to-many relationships.
+
+Graphs databases offer high performance for data models with complex relationships, such as a social network. They are relatively new and are not yet widely-used; it might be more difficult to find development tools and resources. Many graphs can only be accessed with REST APIs.
+
+
+
 #### Additional Resources
 * [Scaling up to your first 10 million users](https://www.youtube.com/watch?v=kKjm4ehYiMs) -- ***Video***
+* [SQL vs noSQL: The Differences](https://www.sitepoint.com/sql-vs-nosql-differences/)
+* [SQL vs noSQL Databases: What's the difference](https://www.ibm.com/think/topics/sql-vs-nosql)
+* [noSQL vs SQL Databases](https://www.mongodb.com/resources/basics/databases/nosql-explained/nosql-vs-sql)
+* Shrading
+  * [The Coming of the Shard](https://highscalability.com/an-unorthodox-approach-to-database-design-the-coming-of-the/)
+* SQL Tuning
+  * [Introduction to SQL Tuning](https://docs.oracle.com/en/database/oracle/oracle-database/23/tgsql/introduction-to-sql-tuning.html)
+* [Introduction to NoSQL](https://www.youtube.com/watch?v=qI_g07C_Q5I) -- ***Video***
 
+## Caching
 
+Caching is the process of storing frequently accessed data in a temporary storage location, called a cache, in order to quickly retrieve it without the need to query the original data source. This can improve the performance of an application by reducing the number of times a data source must be accessed.
+
+There are several caching strategies:
+* Refresh Ahead
+* Write-Behind
+* Write-through
+* Cache Aside
+
+Also, you can have the cache in several places, examples include:
+* Client Caching
+* CDN Caching
+* Web Server Caching
+* Database Caching
+* Application Caching
+
+#### Additional Resources
+* [Cache Strategies](https://medium.com/@mmoshikoo/cache-strategies-996e91c80303)
