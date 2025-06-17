@@ -443,10 +443,18 @@ Graphs databases offer high performance for data models with complex relationshi
 Caching is the process of storing frequently accessed data in a temporary storage location, called a cache, in order to quickly retrieve it without the need to query the original data source. This can improve the performance of an application by reducing the number of times a data source must be accessed.
 
 There are several caching strategies:
-* Refresh Ahead
-* Write-Behind
-* Write-through
-* Cache Aside
+* **Refresh Ahead:** You can configure the cache to automatically refresh any recently accessed cache entry prior to its expiration. Refresh-ahead can result in reduced latency vs read-through if the cache can accurately predict which items are likely to be needed in the future.
+  * **Disadvantages:**
+    * Not accurately predicting which items are likely to be needed in the future can result in reduced performance than without refresh-ahead
+* **Write-Behind:** Data is written to the cache first and then asynchronously to the database improving write performance. This allows write operations to be faster, but it can lead to data inconsistencies if the cache is not properly managed.
+  * **Dsiadvantages:**
+    * There could be data loss if the cache goes down prior to its contents hitting the data store.
+    * It is more complex to implement write-behind than it is to implement cache-aside or write-through.
+* **Write-through:** Data is written to both the cache and the database at the same time. When data is updated, it is written to the cache and the database simultaneously. This ensures that the cache always contains up-to-date data, but it can slow down write operations.
+  * **Disadvantages:** 
+    * When a new node is created due to failure or scaling, the new node will not cache entries until the entry is updated in the database. Cache-aside in conjunction with write through can mitigate this issue.
+    * Most data written might never be read, which can be minimized with a TTL.
+* **Cache Aside:** The application is responsible for managing the cache. When data is requested, the application checks the cache first. If the data is not in the cache, it is retrieved from the database and stored in the cache for future use. This strategy is simple and flexible, but it requires careful management of the cache to ensure that it remains up-to-date.
 
 Also, you can have the cache in several places, examples include:
 * Client Caching
@@ -455,5 +463,57 @@ Also, you can have the cache in several places, examples include:
 * Database Caching
 * Application Caching
 
+#### Client Caching
+Client-side caching refers to the practice of storing frequently accessed data on the client's device rather than the server. This type of caching can help improve the performance of an application by reducing the number of times the client needs to request data from the server.
+
+One common example of client-side caching is web browsers caching frequently accessed web pages and resources. When a user visits a web page, the browser stores a copy of the page and its resources (such as images, stylesheets, and scripts) in the browser's cache. If the user visits the same page again, the browser can retrieve the cached version of the page and its resources instead of requesting them from the server, which can reduce the load time of the page.
+
+Another example of client-side caching is application-level caching. Some applications, such as mobile apps, can cache data on the client's device to improve performance and reduce the amount of data that needs to be transferred over the network.
+
+Client side caching has some advantages like reducing server load, faster page load times, and reducing network traffic. However, it also has some drawbacks like the potential for stale data if the client-side cache is not properly managed, or consuming memory or disk space on the client's device.
+
+#### CDN Caching
+A Content Delivery Network (CDN) is a distributed network of servers that are strategically placed in various locations around the world. The main purpose of a CDN is to serve content to end-users with high availability and high performance by caching frequently accessed content on servers that are closer to the end-users.
+
+When a user requests content from a website that is using a CDN, the CDN will first check if the requested content is available in the cache of a nearby server. If the content is found in the cache, it is served to the user from the nearby server. If the content is not found in the cache, it is requested from the origin server (the original source of the content) and then cached on the nearby server for future requests.
+
+CDN caching can significantly improve the performance and availability of a website by reducing the distance that data needs to travel, reducing the load on the origin server, and allowing for faster delivery of content to end-users.
+
+#### Database Caching
+Your database usually includes some level of caching in a default configuration, optimized for a generic use case. Tweaking these settings for specific usage patterns can further boost performance. it's like having a quick-access memory for frequently used data in applications. Here's a simplified explanation:
+
+1. **Quick Access:** Imagine you're looking up information in a big library (the database). Instead of going to the library every time you need the same book (data), you keep a copy of it on your desk (cache).
+
+2. **Faster Retrieval:** When you need that book again, you first check your desk (cache). If it's there, great! You get it right away without going to the library (database) again.
+
+3. **Saving Time:** If the book isn't on your desk (cache miss), you go to the library (database) to get it. But you make sure to put a copy on your desk for next time, so you won't have to go to the library again if you need it soon.
+
+4. **Different Types:** There are different ways to do this caching. You can cache the results of searches (like bookmarking), whole pieces of information (like keeping a paper copy), or even entire web pages (like saving a snapshot).
+
+5. **Benefits:** By keeping frequently used data close by, you save time and reduce the strain on the library (database). It's like having your most-used books right at your fingertips, making your work faster and more efficient.
+
+However, it's important to keep the cached data up to date. Otherwise, you might end up with outdated information, like using an old edition of a book instead of the latest one. So, managing this cache properly is key to keeping things running smoothly.
+
+#### Application Caching
+In-memory caches such as Memcached and Redis are key-value stores between your application and your data storage. Since the data is held in RAM, it is much faster than typical databases where data is stored on disk. RAM is more limited than disk, so cache invalidation algorithms such as least recently used (LRU) can help invalidate 'cold' entries and keep 'hot' data in RAM.
+
+Redis has the following additional features:
+
+* Persistence option
+* Built-in data structures such as sorted sets and lists
+
+Generally, you should try to avoid file-based caching, as it makes cloning and auto-scaling more difficult.
+
 #### Additional Resources
 * [Cache Strategies](https://medium.com/@mmoshikoo/cache-strategies-996e91c80303)
+* [HTTP Caching](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Caching)
+
+## Asynchronism
+Asynchronous workflows help reduce request times for expensive operations that would otherwise be performed in-line. They can also help by doing time-consuming work in advance, such as periodic aggregation of data.
+
+
+
+#### Additional Resources
+* [Patterns for microservices - Sync vs Async](https://medium.com/inspiredbrilliance/patterns-for-microservices-e57a2d71ff9e)
+
+
