@@ -512,8 +512,259 @@ Generally, you should try to avoid file-based caching, as it makes cloning and a
 Asynchronous workflows help reduce request times for expensive operations that would otherwise be performed in-line. They can also help by doing time-consuming work in advance, such as periodic aggregation of data.
 
 
+### Back Pressure
+If queues start to grow significantly, the queue size can become larger than memory, resulting in cache misses, disk reads, and even slower performance. Back pressure can help by limiting the queue size, thereby maintaining a high throughput rate and good response times for jobs already in the queue. Once the queue fills up, clients get a server busy or HTTP 503 status code to try again later. Clients can retry the request at a later time, perhaps with exponential backoff.
+
+### Task Queues
+Tasks queues receive tasks and their related data, runs them, then delivers their results. They can support scheduling and can be used to run computationally-intensive jobs in the background.
+
+Celery has support for scheduling and primarily has python support.
+
+### Message Queues
+Message queues receive, hold, and deliver messages. If an operation is too slow to perform inline, you can use a message queue with the following workflow:
+
+* An application publishes a job to the queue, then notifies the user of job status
+* A worker picks up the job from the queue, processes it, then signals the job is complete
+
+The user is not blocked and the job is processed in the background. During this time, the client might optionally do a small amount of processing to make it seem like the task has completed. For example, if posting a tweet, the tweet could be instantly posted to your timeline, but it could take some time before your tweet is actually delivered to all of your followers.
+
+* Redis is useful as a simple message broker but messages can be lost.
+* RabbitMQ is popular but requires you to adapt to the 'AMQP' protocol and manage your own nodes.
+* AWS SQS (Amazon Single Queue Service) is a host but can have high latency and has the posibility of messages being delivered twice.
+* Apache Kafka is a distributed event store and stream-processing platform.
+
 
 #### Additional Resources
 * [Patterns for microservices - Sync vs Async](https://medium.com/inspiredbrilliance/patterns-for-microservices-e57a2d71ff9e)
+* [Difference between Message Queue and Task Queue](https://www.quora.com/What-is-the-difference-between-a-message-queue-and-a-task-queue-Why-would-a-task-queue-require-a-message-broker-like-RabbitMQ-Redis-Celery-or-IronMQ-to-function)
+* [RabbitMQ for beginners](https://www.cloudamqp.com/blog/part1-rabbitmq-for-beginners-what-is-rabbitmq.html)
+
+## Idempotent Operations
+Idempotent operations are operations that can be applied multiple times without changing the result beyond the initial application. In other words, if an operation is idempotent, it will have the same effect whether it is executed once or multiple times.
+
+It is also important to understand the benefits of idempotent operations, especially when using message or task queues that do not guarantee exactly once processing. Many queueing systems guarantee at least once message delivery or processing. These systems are not completely synchronized, for instance, across geographic regions, which simplifies some aspects of their implementation or design. Designing the operations that a task queue executes to be idempotent allows one to use a queueing system that has accepted this design trade-off.
+
+#### Additional Resources
+* [What is an idempotent operation?](https://stackoverflow.com/questions/1077412/what-is-an-idempotent-operation)
+* [Overview of Idempotent Operation](https://www.baeldung.com/cs/idempotent-operations)
 
 
+## Communication
+Network protocols are a key part of systems today, as no system can exist in isolation - they all need to communicate with each other. You should learn about the networking protocols such as HTTP, TCP, UDP. Also, learn about the architectural styles such as RPC, REST, GraphQL and gRPC.
+
+### HTTP
+HTTP is a method for encoding and transporting data between a client and a server. It is a request/response protocol: clients issue requests and servers issue responses with relevant content and completion status info about the request. HTTP is self-contained, allowing requests and responses to flow through many intermediate routers and servers that perform load balancing, caching, encryption, and compression.
+
+A basic HTTP request consists of a verb (method) and a resource (endpoint). Below are common HTTP verbs:
+
+Verb   | Description                   | Idempotent* | Safe | Cacheable                               |
+-------|-------------------------------|-------------|------|-----------------------------------------|
+GET    | Reads a resource              | Yes         | Yes  | Yes                                     |
+POST   | Creates a resource or trigger | No          | No   | Yes if response contains freshness info |
+PUT    | Creates or replace a resource | Yes         | No   | No                                      |
+PATCH  | Partially updates a resource  | No          | No   | Yes if response contains freshness info |
+DELETE | Deletes a resource            | Yes         | No   | No                                      |
+
+HTTP is an application layer protocol relying on lower-level protocols such as TCP and UDP.
+
+### TCP
+TCP is a connection-oriented protocol over an IP network. Connection is established and terminated using a handshake. All packets sent are guaranteed to reach the destination in the original order and without corruption through:
+
+* Sequence numbers and checksum field for each packet
+* Acknowledgement packets and automatic retransmission
+
+If the sender does not receive a correct response, it will resend the packets. If there are multiple timeouts, the connection is dropped. TCP also implements flow control and congestion control. These guarantees cause delays and generally result in less efficient transmission than UDP.
+
+To ensure high throughput, web servers can keep a large number of TCP connections open, resulting in high memory usage. It can be expensive to have a large number of open connections between web server threads and say, a memcached server. Connection pooling can help in addition to switching to UDP where applicable.
+
+TCP is useful for applications that require high reliability but are less time critical. Some examples include web servers, database info, SMTP, FTP, and SSH.
+
+Use TCP over UDP when:
+
+* You need all of the data to arrive intact
+* You want to automatically make a best estimate use of the network.
+
+### UDP
+UDP is connectionless. Datagrams (analogous to packets) are guaranteed only at the datagram level. Datagrams might reach their destination out of order or not at all. UDP does not support congestion control. Without the guarantees that TCP support, UDP is generally more efficient.
+
+UDP can broadcast, sending datagrams to all devices on the subnet. This is useful with DHCP because the client has not yet received an IP address, thus preventing a way for TCP to stream without the IP address.
+
+UDP is less reliable but works well in real time use cases such as VoIP, video chat, streaming, and realtime multiplayer games.
+
+### RPC
+In an RPC, a client causes a procedure to execute on a different address space, usually a remote server. The procedure is coded as if it were a local procedure call, abstracting away the details of how to communicate with the server from the client program. Remote calls are usually slower and less reliable than local calls so it is helpful to distinguish RPC calls from local calls.
+
+### gRPC
+gRPC is a high-performance, open-source framework for building remote procedure call (RPC) APIs. It is based on the Protocol Buffers data serialization format and supports a variety of programming languages, including C#, Java, and Python.
+
+### REST
+REST is an architectural style enforcing a client/server model where the client acts on a set of resources managed by the server. The server provides a representation of resources and actions that can either manipulate or get a new representation of resources. All communication must be stateless and cacheable.
+
+There are four qualities of a RESTful interface:
+* Identify resources (URI in HTTP) - use the same URI regardless of any operation.
+* Change with representations (Verbs in HTTP) - use verbs, headers, and body.
+* Self-descriptive error message (status response in HTTP) - Use status codes, don't reinvent the wheel.
+* HATEOAS (HTML interface for HTTP) - your web service should be fully accessible in a browser.
+
+REST is focused on exposing data. It minimizes the coupling between client/server and is often used for public HTTP APIs. REST uses a more generic and uniform method of exposing resources through URIs, representation through headers, and actions through verbs such as GET, POST, PUT, DELETE, and PATCH. Being stateless, REST is great for horizontal scaling and partitioning.
+
+### GraphQL
+GraphQL is a query language and runtime for building APIs. It allows clients to define the structure of the data they need and the server will return exactly that. This is in contrast to traditional REST APIs, where the server exposes a fixed set of endpoints and the client must work with the data as it is returned.
+
+#### Additional Resources
+* [Everything you need to know about HTTP](https://cs.fyi/guide/http-in-depth)
+* [What is GraphQL](https://www.redhat.com/en/topics/api/what-is-graphql)
+
+## Performace Antipatterns
+
+Performance antipatterns in system design refer to common mistakes or suboptimal practices that can lead to poor performance in a system. These patterns can occur at different levels of the system and can be caused by a variety of factors such as poor design, lack of optimization, or lack of understanding of the workload.
+
+Some of the examples of performance antipatterns include:
+* **N+1 queries:** This occurs when a system makes multiple queries to a database to retrieve related data, instead of using a single query to retrieve all the necessary data.
+* **Chatty interfaces:** This occurs when a system makes too many small and frequent requests to an external service or API, instead of making fewer, larger requests.
+* **Unbounded data:** This occurs when a system retrieves or processes more data than is necessary for the task at hand, leading to increased resource usage and reduced performance.
+* **Inefficient algorithms:** This occurs when a system uses an algorithm that is not well suited to the task at hand, leading to increased resource usage and reduced performance.
+
+### Busy Database
+A busy database in system design refers to a database that is handling a high volume of requests or transactions, this can occur when a system is experiencing high traffic or when a database is not properly optimized for the workload it is handling. This can lead to Performance degradation, Increased resource utilization, Deadlocks and contention, Data inconsistencies. To address a busy database, a number of approaches can be taken such as Scaling out, Optimizing the schema, Caching, and Indexing.
+
+### Busy Frontend
+Performing asynchronous work on a large number of background threads can starve other concurrent foreground tasks of resources, decreasing response times to unacceptable levels.
+
+Resource-intensive tasks can increase the response times for user requests and cause high latency. One way to improve response times is to offload a resource-intensive task to a separate thread. This approach lets the application stay responsive while processing happens in the background. However, tasks that run on a background thread still consume resources. If there are too many of them, they can starve the threads that are handling requests.
+
+This problem typically occurs when an application is developed as monolithic piece of code, with all of the business logic combined into a single tier shared with the presentation layer.
+
+### Chatty I/O
+The cumulative effect of a large number of I/O requests can have a significant impact on performance and responsiveness.
+
+Network calls and other I/O operations are inherently slow compared to compute tasks. Each I/O request typically has significant overhead, and the cumulative effect of numerous I/O operations can slow down the system.
+
+Here are some common causes of chatty I/O:
+* Reading and writing individual records to a database as distinct requests
+* Implementing a single logical operation as a series of HTTP requests
+* Reading and writing to a file on disk
+
+### Retry Storm
+Retry Storm refers to a situation in which a large number of retries are triggered in a short period of time, leading to a significant increase in traffic and resource usage. This can occur when a system is not properly designed to handle failures or when a component is behaving unexpectedly. This can lead to Performance degradation, Increased resource utilization, Increased network traffic, and Poor user experience. To address retry storms, a number of approaches can be taken such as Exponential backoff, Circuit breaking, and Monitoring and alerting.
+
+### No Caching
+No caching antipattern occurs when a cloud application that handles many concurrent requests, repeatedly fetches the same data. This can reduce performance and scalability.
+
+When data is not cached, it can cause a number of undesirable behaviors, including:
+* Repeatedly fetching the same information from a resource that is expensive to access, in terms of I/O overhead or latency.
+* Repeatedly constructing the same objects or data structures for multiple requests.
+* Making excessive calls to a remote service that has a service quota and throttles clients past a certain limit.
+
+In turn, these problems can lead to poor response times, increased contention in the data store, and poor scalability.
+
+### Improper Instantiation
+Improper instantiation in system design refers to the practice of creating unnecessary instances of an object, class or service, which can lead to performance and scalability issues. This can happen when the system is not properly designed, when the code is not written in an efficient way, or when the code is not optimized for the specific use case.
+
+### Monolithic Persistence
+Monolithic Persistence refers to the use of a single, monolithic database to store all of the data for an application or system. This approach can be used for simple, small-scale systems but as the system grows and evolves it can become a bottleneck, resulting in poor scalability, limited flexibility, and increased complexity. To address these limitations, a number of approaches can be taken such as Microservices, Sharding, and NoSQL databases.
+
+### Noisy Neighbor
+Noisy neighbor refers to a situation in which one or more components of a system are utilizing a disproportionate amount of shared resources, leading to resource contention and reduced performance for other components. This can occur when a system is not properly designed or configured to handle the workload, or when a component is behaving unexpectedly.
+
+Examples of noisy neighbor scenarios include:
+* One user on a shared server utilizing a large amount of CPU or memory, leading to reduced performance for other users on the same server.
+* One process on a shared server utilizing a large amount of I/O, causing other processes to experience slow I/O and increased latency.
+* One application consuming a large amount of network bandwidth, causing other applications to experience reduced throughput.
+
+### Synchronous I/O
+Blocking the calling thread while I/O completes can reduce performance and affect vertical scalability.
+
+A synchronous I/O operation blocks the calling thread while the I/O completes. The calling thread enters a wait state and is unable to perform useful work during this interval, wasting processing resources.
+
+Common examples of I/O include:
+* Retrieving or persisting data to a database or any type of persistent storage.
+* Sending a request to a web service.
+* Posting a message or retrieving a message from a queue.
+* Writing to or reading from a local file.
+
+This antipattern typically occurs because:
+* It appears to be the most intuitive way to perform an operation.
+* The application requires a response from a request.
+* The application uses a library that only provides synchronous methods for I/O.
+* An external library performs synchronous I/O operations internally. A single synchronous I/O call can block an entire call chain.
+
+### Extraneous Fetching
+Extraneous fetching in system design refers to the practice of retrieving more data than is needed for a specific task or operation. This can occur when a system is not optimized for the specific workload or when the system is not properly designed to handle the data requirements.
+
+Extraneous fetching can lead to a number of issues, such as:
+* Performance degradation
+* Increased resource utilization
+* Increased network traffic
+* Poor user experience
+
+#### Additional resources
+* [Performance antipatterns for cloud applications](https://learn.microsoft.com/en-us/azure/architecture/antipatterns/)
+* [Busy Database](https://learn.microsoft.com/en-us/azure/architecture/antipatterns/busy-database/)
+* [Busy Frontend](https://learn.microsoft.com/en-us/azure/architecture/antipatterns/busy-front-end/)
+* [Chatty I/O](https://learn.microsoft.com/en-us/azure/architecture/antipatterns/chatty-io/)
+* [Retry Storm](https://learn.microsoft.com/en-us/azure/architecture/antipatterns/retry-storm/)
+* [How To Avoid Retry Storms In Distributed Systems](https://faun.pub/how-to-avoid-retry-storms-in-distributed-systems-91bf34f43c7f)
+* [No Caching](https://learn.microsoft.com/en-us/azure/architecture/antipatterns/no-caching/)
+* [Improper Instantiation](https://learn.microsoft.com/en-us/azure/architecture/antipatterns/improper-instantiation/)
+* [Monolithic Persistence](https://learn.microsoft.com/en-us/azure/architecture/antipatterns/monolithic-persistence/)
+* [Noisy Neighbor](https://learn.microsoft.com/en-us/azure/architecture/antipatterns/noisy-neighbor/noisy-neighbor)
+* [Synchronous I/O](https://learn.microsoft.com/en-us/azure/architecture/antipatterns/synchronous-io/)
+* [Extraneous Fetching](https://learn.microsoft.com/en-us/azure/architecture/antipatterns/extraneous-fetching/)
+
+## Monitoring
+
+Distributed applications and services running in the cloud are, by their nature, complex pieces of software that comprise many moving parts. In a production environment, it's important to be able to track the way in which users use your system, trace resource utilization, and generally monitor the health and performance of your system. You can use this information as a diagnostic aid to detect and correct issues, and also to help spot potential problems and prevent them from occurring.
+
+### Health Monitoring
+A system is healthy if it is running and capable of processing requests. The purpose of health monitoring is to generate a snapshot of the current health of the system so that you can verify that all components of the system are functioning as expected.
+
+### Availability Monitoring
+A truly healthy system requires that the components and subsystems that compose the system are available. Availability monitoring is closely related to health monitoring. But whereas health monitoring provides an immediate view of the current health of the system, availability monitoring is concerned with tracking the availability of the system and its components to generate statistics about the uptime of the system.
+
+### Performance Monitoring
+As the system is placed under more and more stress (by increasing the volume of users), the size of the datasets that these users access grows and the possibility of failure of one or more components becomes more likely. Frequently, component failure is preceded by a decrease in performance. If you're able detect such a decrease, you can take proactive steps to remedy the situation.
+
+### Security Monitoring
+All commercial systems that include sensitive data must implement a security structure. The complexity of the security mechanism is usually a function of the sensitivity of the data. In a system that requires users to be authenticated, you should record:
+* All sign-in attempts, whether they fail or succeed.
+* All operations performed by—and the details of all resources accessed by—an authenticated user.
+* When a user ends a session and signs out
+
+Monitoring might be able to help detect attacks on the system. For example, a large number of failed sign-in attempts might indicate a brute-force attack. An unexpected surge in requests might be the result of a distributed denial-of-service (DDoS) attack. You must be prepared to monitor all requests to all resources regardless of the source of these requests. A system that has a sign-in vulnerability might accidentally expose resources to the outside world without requiring a user to actually sign in.
+
+### Usage Monitoring
+Usage monitoring tracks how the features and components of an application are used. An operator can use the gathered data to:
+
+* Determine which features are heavily used and determine any potential hotspots in the system. High-traffic elements might benefit from functional partitioning or even replication to spread the load more evenly. An operator can also use this information to ascertain which features are infrequently used and are possible candidates for retirement or replacement in a future version of the system.
+
+* Obtain information about the operational events of the system under normal use. For example, in an e-commerce site, you can record the statistical information about the number of transactions and the volume of customers that are responsible for them. This information can be used for capacity planning as the number of customers grows.
+
+* Detect (possibly indirectly) user satisfaction with the performance or functionality of the system. For example, if a large number of customers in an e-commerce system regularly abandon their shopping carts, this might be due to a problem with the checkout functionality.
+
+* Generate billing information. A commercial application or multitenant service might charge customers for the resources that they use.
+
+* Enforce quotas. If a user in a multitenant system exceeds their paid quota of processing time or resource usage during a specified period, their access can be limited or processing can be throttled.
+
+### Instrumentation
+Instrumentation is a critical part of the monitoring process. You can make meaningful decisions about the performance and health of a system only if you first capture the data that enables you to make these decisions. The information that you gather by using instrumentation should be sufficient to enable you to assess performance, diagnose problems, and make decisions without requiring you to sign in to a remote production server to perform tracing (and debugging) manually. Instrumentation data typically comprises metrics and information that's written to trace logs.
+
+### Visualization and Alerts
+An important aspect of any monitoring system is the ability to present the data in such a way that an operator can quickly spot any trends or problems. Also important is the ability to quickly inform an operator if a significant event has occurred that might require attention.
+
+#### Additional Resources
+* [Montoring and diagnostics guidance](https://learn.microsoft.com/en-us/azure/architecture/best-practices/monitoring)
+
+## Cloud Design Patterns
+Cloud design patterns are solutions to common problems that arise when building systems that run on a cloud platform. These patterns provide a way to design and implement systems that can take advantage of the unique characteristics of the cloud, such as scalability, elasticity, and pay-per-use pricing. Some common cloud design patterns include Scalability, Elasticity, Fault Tolerance, Microservices, Serverless, Data Management, Front-end and Back-end separation and Hybrid.
+
+### Design & Implementation
+Good design encompasses factors such as consistency and coherence in component design and deployment, maintainability to simplify administration and development, and reusability to allow components and subsystems to be used in other applications and in other scenarios. Decisions made during the design and implementation phase have a huge impact on the quality and the total cost of ownership of cloud hosted applications and services.
+
+#### Stangler fig
+Incrementally migrate a legacy system by gradually replacing specific pieces of functionality with new applications and services. As features from the legacy system are replaced, the new system eventually replaces all of the old system's features, strangling the old system and allowing you to decommission it.
+
+
+#### Additional Resources
+* [Cloud Design Patterns](https://learn.microsoft.com/en-us/azure/architecture/patterns/)
+* [Strangler fig](https://learn.microsoft.com/en-us/azure/architecture/patterns/strangler-fig)
