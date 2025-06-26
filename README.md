@@ -764,7 +764,89 @@ Good design encompasses factors such as consistency and coherence in component d
 #### Stangler fig
 Incrementally migrate a legacy system by gradually replacing specific pieces of functionality with new applications and services. As features from the legacy system are replaced, the new system eventually replaces all of the old system's features, strangling the old system and allowing you to decommission it.
 
+#### Sidecar
+Deploy components of an application into a separate process or container to provide isolation and encapsulation. This pattern can also enable applications to be composed of heterogeneous components and technologies.
+
+This pattern is named Sidecar because it resembles a sidecar attached to a motorcycle. In the pattern, the sidecar is attached to a parent application and provides supporting features for the application. The sidecar also shares the same lifecycle as the parent application, being created and retired alongside the parent. The sidecar pattern is sometimes referred to as the sidekick pattern and is a decomposition pattern.
+
+#### Static Content Hosting
+Deploy static content to a cloud-based storage service that can deliver them directly to the client. This can reduce the need for potentially expensive compute instances.
+
+#### Leader Election
+Coordinate the actions performed by a collection of collaborating instances in a distributed application by electing one instance as the leader that assumes responsibility for managing the others. This can help to ensure that instances don't conflict with each other, cause contention for shared resources, or inadvertently interfere with the work that other instances are performing.
+
+#### CQRS
+CQRS stands for Command and Query Responsibility Segregation, a pattern that separates read and update operations for a data store. Implementing CQRS in your application can maximize its performance, scalability, and security. The flexibility created by migrating to CQRS allows a system to better evolve over time and prevents update commands from causing merge conflicts at the domain level.
+
+#### Pipes and Filters
+Decompose a task that performs complex processing into a series of separate elements that can be reused. This can improve performance, scalability, and reusability by allowing task elements that perform the processing to be deployed and scaled independently.
+
+#### Ambassador
+Create helper services that send network requests on behalf of a consumer service or application. An ambassador service can be thought of as an out-of-process proxy that is co-located with the client.
+
+This pattern can be useful for offloading common client connectivity tasks such as monitoring, logging, routing, security (such as TLS), and resiliency patterns in a language agnostic way. It is often used with legacy applications, or other applications that are difficult to modify, in order to extend their networking capabilities. It can also enable a specialized team to implement those features.
+
+#### Gateway Routing
+Route requests to multiple services or multiple service instances using a single endpoint. The pattern is useful when you want to:
+
+* Expose multiple services on a single endpoint and route to the appropriate service based on the request
+* Expose multiple instances of the same service on a single endpoint for load balancing or availability purposes
+* Expose differing versions of the same service on a single endpoint and route traffic across the different versions
+
+#### Gateway Offloading
+Offload shared or specialized service functionality to a gateway proxy. This pattern can simplify application development by moving shared service functionality, such as the use of SSL certificates, from other parts of the application into the gateway.
+
+#### Gateway Aggregation
+Use a gateway to aggregate multiple individual requests into a single request. This pattern is useful when a client must make multiple calls to different backend systems to perform an operation.
+
+#### External Configuration Store
+Move configuration information out of the application deployment package to a centralized location. This can provide opportunities for easier management and control of configuration data, and for sharing configuration data across applications and application instances.
+
+#### Compute Resource Consolidation
+Consolidate multiple tasks or operations into a single computational unit. This can increase compute resource utilization, and reduce the costs and management overhead associated with performing compute processing in cloud-hosted applications.
+
+#### Backends for Frontend
+Create separate backend services to be consumed by specific frontend applications or interfaces. This pattern is useful when you want to avoid customizing a single backend for multiple interfaces. This pattern was first described by Sam Newman.
+
+#### Anti-corruption Layer
+Implement a facade or adapter layer between different subsystems that don't share the same semantics. This layer translates requests that one subsystem makes to the other subsystem. Use this pattern to ensure that an application's design is not limited by dependencies on outside subsystems. This pattern was first described by Eric Evans in Domain-Driven Design.
+
+### Data Management
+Data management is the key element of cloud applications, and influences most of the quality attributes. Data is typically hosted in different locations and across multiple servers for reasons such as performance, scalability or availability, and this can present a range of challenges. For example, data consistency must be maintained, and data will typically need to be synchronized across different locations.
+
+#### Valet Key
+Use a token that provides clients with restricted direct access to a specific resource, in order to offload data transfer from the application. This is particularly useful in applications that use cloud-hosted storage systems or queues, and can minimize cost and maximize scalability and performance.
+
+### Shrading
+Sharding is a technique used to horizontally partition a large data set across multiple servers, in order to improve the performance, scalability, and availability of a system. This is done by breaking the data set into smaller chunks, called shards, and distributing the shards across multiple servers. Each shard is self-contained and can be managed and scaled independently of the other shards. Sharding can be used in scenarios like scalability, availability, and geo-distribution. Sharding can be implemented using several different algorithms such as range-based sharding, hash-based sharding, and directory-based sharding.
+
+#### Materialized View
+Generate prepopulated views over the data in one or more data stores when the data isn't ideally formatted for required query operations. This can help support efficient querying and data extraction, and improve application performance.
+
 
 #### Additional Resources
 * [Cloud Design Patterns](https://learn.microsoft.com/en-us/azure/architecture/patterns/)
-* [Strangler fig](https://learn.microsoft.com/en-us/azure/architecture/patterns/strangler-fig)
+* Design & Implementation
+  * [Strangler fig](https://learn.microsoft.com/en-us/azure/architecture/patterns/strangler-fig)
+  * [Sidecar](https://learn.microsoft.com/en-us/azure/architecture/patterns/sidecar)
+  * [Static Content Hosting](https://learn.microsoft.com/en-us/azure/architecture/patterns/static-content-hosting)
+  * [Leader Election](https://learn.microsoft.com/en-us/azure/architecture/patterns/leader-election)
+  * [CQRS](https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs)
+  * [Pipes and Filters](https://learn.microsoft.com/en-us/azure/architecture/patterns/pipes-and-filters)
+  * [Ambassador](https://learn.microsoft.com/en-us/azure/architecture/patterns/ambassador)
+  * [Gateway Routing](https://learn.microsoft.com/en-us/azure/architecture/patterns/gateway-routing)
+  * [Gateway Offloading](https://learn.microsoft.com/en-us/azure/architecture/patterns/gateway-offloading)
+  * [Gateway Aggregation](https://learn.microsoft.com/en-us/azure/architecture/patterns/gateway-aggregation)
+  * [External Configuration Store](https://learn.microsoft.com/en-us/azure/architecture/patterns/external-configuration-store)
+  * [Compute Resource Consilidation](https://learn.microsoft.com/en-us/azure/architecture/patterns/compute-resource-consolidation)
+  * [Backends for Frontends](https://learn.microsoft.com/en-us/azure/architecture/patterns/backends-for-frontends)
+  * [Anti-corruption Layer](https://learn.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer)
+* Data Management
+  * [Valet Key](https://learn.microsoft.com/en-us/azure/architecture/patterns/valet-key)
+  * [Sharding](https://learn.microsoft.com/en-us/azure/architecture/patterns/sharding)
+  * [Materialized View]()
+
+
+
+
+
