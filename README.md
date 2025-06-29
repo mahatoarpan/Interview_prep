@@ -823,9 +823,36 @@ Sharding is a technique used to horizontally partition a large data set across m
 #### Materialized View
 Generate prepopulated views over the data in one or more data stores when the data isn't ideally formatted for required query operations. This can help support efficient querying and data extraction, and improve application performance.
 
+#### Index Table
+Create indexes over the fields in data stores that are frequently referenced by queries. This pattern can improve query performance by allowing applications to more quickly locate the data to retrieve from a data store.
+
+#### Event Sourcing
+Instead of storing just the current state of the data in a domain, use an append-only store to record the full series of actions taken on that data. The store acts as the system of record and can be used to materialize the domain objects. This can simplify tasks in complex domains, by avoiding the need to synchronize the data model and the business domain, while improving performance, scalability, and responsiveness. It can also provide consistency for transactional data, and maintain full audit trails and history that can enable compensating actions.
+
+
+    Important Info:
+
+    Event sourcing is a complex pattern that permeates through the entire architecture and introduces trade-offs to achieve increased performance, scalability, and auditability. Once your system becomes an event sourcing system, all future design decisions are constrained by the fact that this is an event sourcing system. There is a high cost to migrate to or from an event sourcing system. This pattern is best suited for systems where performance and scalability are top requirements. The complexity that event sourcing adds to a system is not justified for most systems.
+
+#### Cache Aside
+Load data on demand into a cache from a data store. This can improve performance and also helps to maintain consistency between data held in the cache and data in the underlying data store.
+
+### Messaging
+Messaging is a pattern that allows for the communication and coordination between different components or systems, using messaging technologies such as message queues, message brokers, and event buses. This pattern allows for decoupling of the sender and receiver, and can be used to build scalable and flexible systems.
+
+#### Sequential Convoy
+Sequential Convoy is a pattern that allows for the execution of a series of tasks, or convoy, in a specific order. This pattern can be used to ensure that a set of dependent tasks are executed in the correct order and to handle errors or failures during the execution of the tasks. It can be used in scenarios like workflow and transaction. It can be implemented using a variety of technologies such as state machines, workflows, and transactions.
+
+#### Scheduling Agent Supervisor
+Coordinate a set of distributed actions as a single operation. If any of the actions fail, try to handle the failures transparently, or else undo the work that was performed, so the entire operation succeeds or fails as a whole. This can add resiliency to a distributed system, by enabling it to recover and retry actions that fail due to transient exceptions, long-lasting faults, and process failures.
+
+#### Queue-Based Load Leveling
+Use a queue that acts as a buffer between a task and a service it invokes in order to smooth intermittent heavy loads that can cause the service to fail or the task to time out. This can help to minimize the impact of peaks in demand on availability and responsiveness for both the task and the service.
+
 
 #### Additional Resources
 * [Cloud Design Patterns](https://learn.microsoft.com/en-us/azure/architecture/patterns/)
+
 * Design & Implementation
   * [Strangler fig](https://learn.microsoft.com/en-us/azure/architecture/patterns/strangler-fig)
   * [Sidecar](https://learn.microsoft.com/en-us/azure/architecture/patterns/sidecar)
@@ -841,10 +868,19 @@ Generate prepopulated views over the data in one or more data stores when the da
   * [Compute Resource Consilidation](https://learn.microsoft.com/en-us/azure/architecture/patterns/compute-resource-consolidation)
   * [Backends for Frontends](https://learn.microsoft.com/en-us/azure/architecture/patterns/backends-for-frontends)
   * [Anti-corruption Layer](https://learn.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer)
+
 * Data Management
   * [Valet Key](https://learn.microsoft.com/en-us/azure/architecture/patterns/valet-key)
   * [Sharding](https://learn.microsoft.com/en-us/azure/architecture/patterns/sharding)
-  * [Materialized View]()
+  * [Materialized View](https://learn.microsoft.com/en-us/azure/architecture/patterns/materialized-view)
+  * [Index Table](https://learn.microsoft.com/en-us/azure/architecture/patterns/index-table)
+  * [Event Sourcing](https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing)
+  * [Cache Aside](https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside)
+
+* Messaging
+  * [Sequential Convoy](https://learn.microsoft.com/en-us/azure/architecture/patterns/sequential-convoy)
+  * [Scheduler Agent Supervisor](https://learn.microsoft.com/en-us/azure/architecture/patterns/scheduler-agent-supervisor)
+  * [Queue-Based Load Leveling](https://learn.microsoft.com/en-us/azure/architecture/patterns/queue-based-load-leveling)
 
 
 
