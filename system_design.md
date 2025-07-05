@@ -849,6 +849,26 @@ Coordinate a set of distributed actions as a single operation. If any of the act
 #### Queue-Based Load Leveling
 Use a queue that acts as a buffer between a task and a service it invokes in order to smooth intermittent heavy loads that can cause the service to fail or the task to time out. This can help to minimize the impact of peaks in demand on availability and responsiveness for both the task and the service.
 
+#### Publisher Subscriber
+Enable an application to announce events to multiple interested consumers asynchronously, without coupling the senders to the receivers.
+
+#### Priority Queue
+Prioritize requests sent to services so that requests with a higher priority are received and processed more quickly than those with a lower priority. This pattern is useful in applications that offer different service level guarantees to individual clients.
+
+#### Competing Consumers
+Enable multiple concurrent consumers to process messages received on the same messaging channel. With multiple concurrent consumers, a system can process multiple messages concurrently to optimize throughput, to improve scalability and availability, and to balance the workload.
+
+#### Choreopgraphy
+Have each component of the system participate in the decision-making process about the workflow of a business transaction, instead of relying on a central point of control.
+
+The pattern is a way to minimize dependency on custom software that centralizes the communication workflow. The components implement common logic as they choreograph the workflow among themselves without having direct communication with each other. A common way to implement choreography is to use a message broker that buffers requests until downstream components claim and process them. 
+
+#### Claim Check
+Split a large message into a claim check and a payload. Send the claim check to the messaging platform and store the payload to an external service. This pattern allows large messages to be processed, while protecting the message bus and the client from being overwhelmed or slowed down. This pattern also helps to reduce costs, as storage is usually cheaper than resource units used by the messaging platform.
+
+#### Asynchronous Request-Reply
+Decouple backend processing from a frontend host, where backend processing needs to be asynchronous, but the frontend still needs a clear response.
+
 
 #### Additional Resources
 * [Cloud Design Patterns](https://learn.microsoft.com/en-us/azure/architecture/patterns/)
@@ -881,7 +901,14 @@ Use a queue that acts as a buffer between a task and a service it invokes in ord
   * [Sequential Convoy](https://learn.microsoft.com/en-us/azure/architecture/patterns/sequential-convoy)
   * [Scheduler Agent Supervisor](https://learn.microsoft.com/en-us/azure/architecture/patterns/scheduler-agent-supervisor)
   * [Queue-Based Load Leveling](https://learn.microsoft.com/en-us/azure/architecture/patterns/queue-based-load-leveling)
+  * [Publisher Subscriber](https://learn.microsoft.com/en-us/azure/architecture/patterns/publisher-subscriber)
+  * [Priority Queue](https://learn.microsoft.com/en-us/azure/architecture/patterns/priority-queue)
+  * [Competing Consumers](https://learn.microsoft.com/en-us/azure/architecture/patterns/competing-consumers)
+  * [Choreography](https://learn.microsoft.com/en-us/azure/architecture/patterns/choreography)
+  * [Claim Check](https://learn.microsoft.com/en-us/azure/architecture/patterns/claim-check)
+  * [Asynchronous Request-Reply](https://learn.microsoft.com/en-us/azure/architecture/patterns/async-request-reply)
 
+## Reliability Patterns
 
 
 

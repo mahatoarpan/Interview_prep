@@ -1,0 +1,598 @@
+# Software Design and Architecture
+Resource - (https://roadmap.sh/software-design-architecture)
+
+## Clean Code Principles
+
+Clean code is code that is easy to read, understand, and maintain. It follows a set of principles that are designed to make the code more readable, testable, and less error-prone. Some of the key principles of clean code include:
+
+* **Clarity:** The code should be easy to read and understand.
+* **Simplicity:** The code should be as simple as possible, avoiding unnecessary complexity.
+* **Comments:** Comments should be used sparingly and only when necessary to explain complex or non-obvious code.
+* **Naming:** Variables, functions, and classes should have meaningful and descriptive names.
+* **Formatting:** The code should be consistently formatted to improve readability.
+* **Functionality:** The code should be organized into small, single-purpose functions and classes.
+* **Error handling:** The code should handle errors in a consistent and predictable way.
+* **Testing:** The code should be testable and have a high test coverage.
+* **Reusability:** The code should be designed to be reusable and modular.
+* **Performance:** The code should be designed to be efficient and performant.
+
+
+#### Additional Resources
+* [Introduction to Clean Code & Software Design Principles](https://workat.tech/machine-coding/tutorial/introduction-clean-code-software-design-principles-nwu4qqc63e09)
+* [10 Tips to Clean Code](https://www.pluralsight.com/resources/blog/software-development/10-steps-to-clean-code)
+* [How to reduce cyclomatic complexity and make code more readable](https://kasp9023.medium.com/how-to-make-your-code-more-readable-focus-on-the-happy-path-and-reduce-cyclomatic-complexity-66802b8897b5)
+* [Clean Architecture](https://pusher.com/tutorials/clean-architecture-introduction/)
+
+
+## Programming Paradigms
+A programming paradigm is a fundamental style or approach to solving problems using a programming language. Different programming paradigms provide different ways of organizing and structuring code, and have different strengths and weaknesses. Some of the most common programming paradigms include:
+
+* Imperative programming
+* Functional programming
+* Object-oriented programming
+* Logic programming
+* Declarative programming
+
+
+#### Additional Resources
+* [What is functional programming?](https://medium.com/javascript-scene/master-the-javascript-interview-what-is-functional-programming-7f218c68b3a0)
+* [What is Object Oriented Programming](https://www.freecodecamp.org/news/what-is-object-oriented-programming/)
+
+
+## Object Oriented Programming
+Object-oriented programming (OOP) is a programming paradigm that is based on the concept of "objects," which are instances of a class. In OOP, a class is a blueprint for creating objects, which have both data (attributes) and behavior (methods). The main idea behind OOP is to model real-world objects and their interactions, making it well-suited for creating complex and large-scale software systems.
+
+### Primary Principles of OOPs
+
+1. **Inheritance:**
+    Inheritance is a fundamental concept in object-oriented programming (OOP) that allows a new class to inherit the properties and methods of an existing class. The class that is inherited from is called the parent or super class, while the class that inherits is called the child or sub class. Inheritance enables code reuse and allows for a hierarchical organization of classes, where a child class can inherit the properties and methods of its parent class and potentially add or override them. The main advantage of inheritance is that it allows for a clean and organized way to reuse code and share functionality among classes.
+
+2. **Polymorphism:**
+    Polymorphism is a concept in object-oriented programming (OOP) that allows objects of different classes to be treated as objects of a common parent class. This is achieved by defining a common interface for all classes that need to be treated polymorphically. The word polymorphism is derived from Greek, "poly" means many and "morph" means form. There are two types of polymorphism:
+
+    * Compile-time polymorphism (also called static polymorphism or early binding) occurs when the type of the object that is going to be acted upon is determined at compile-time. This is achieved through method overloading, which allows multiple methods to have the same name but different parameters within the same class.
+    * Run-time polymorphism (also called dynamic polymorphism or late binding) occurs when the type of the object is determined at run-time. This is achieved through method overriding, which allows a child class to provide a specific implementation of a method that is already defined in its parent class.
+
+3. **Abstraction:** 
+    Abstraction is a concept in object-oriented programming (OOP) that refers to the process of hiding the implementation details of an object and exposing only its essential features. It enables the use of objects without the need to understand the underlying complexity of their internal structure and behavior. There are two types of abstraction:
+
+    * Data abstraction: refers to hiding the internal representation of data and providing a simplified view of the data through a set of well-defined interfaces.
+    * Behavioral abstraction: refers to hiding the internal behavior of an object and providing a simplified view of its capabilities through a set of well-defined interfaces.
+
+4. **Encaplsulation:** 
+    Encapsulation is a concept in object-oriented programming (OOP) that refers to the practice of wrapping an object's internal data and behavior within a defined interface, and hiding the implementation details from the outside world. It is one of the fundamental concepts of OOP and is closely related to the concepts of data hiding and information hiding.
+    Encapsulation is achieved by using access modifiers (such as "public," "private," and "protected") to control the visibility and accessibility of an object's data and methods. For example, data members of a class can be declared as private, which means they can only be accessed by methods within the class, while methods can be declared as public, which means they can be called by any code that has a reference to the object.
+
+
+### Paradigm Features
+
+1. **Abstract Classes:**
+    An abstract class is a class in object-oriented programming (OOP) that cannot be instantiated. Instead, it serves as a template or blueprint for other classes to inherit from. An abstract class can contain both abstract and non-abstract methods (abstract methods are methods that do not have any implementation, they just have a signature). Abstract classes are used to provide a common interface and implementation for a group of related classes. They are also used to define common behavior that must be implemented by all subclasses. A subclass that inherits from an abstract class is called a concrete class, and it must provide an implementation for all the abstract methods declared in the parent class.
+
+2. **Concrete Classes:** 
+    A concrete class is a class in object-oriented programming (OOP) that can be instantiated, meaning objects can be created from it. A concrete class is a class that provides an implementation for all of the abstract methods declared in its parent class, if it inherits from an abstract class. A concrete class can also be a class that does not inherit from an abstract class, in that case it can have implementation for all of its methods.
+    Concrete classes are used to provide specific implementation details for a group of related classes that inherit from a common abstract class. They are also used to define unique behavior for a specific class. A concrete class can have its own methods and variables, and can also override the methods of its parent class.
+
+3. **Scope/Visibility:**
+    Scope visibility refers to the accessibility or visibility of variables, functions, and other elements in a program, depending on the context in which they are defined. In object-oriented programming (OOP), scope visibility is controlled through the use of access modifiers, such as "public," "private," and "protected."
+
+    * Public: A public element can be accessed from anywhere in the program, both within the class and outside of it.
+    * Private: A private element can only be accessed within the class in which it is defined. It is not accessible to other classes, even if they inherit from the class.
+    * Protected: A protected element can only be accessed within the class and its subclasses.
+
+4. **Interfaces:** 
+    In object-oriented programming (OOP), an interface is a contract or a set of methods that a class must implement. It defines a common set of methods that a class must provide, but it does not provide any implementation details. An interface can include both method signatures and constants. Interfaces are used to define a common behavior for a group of related classes, and to provide a way for objects of different classes to be treated polymorphically. A class that implements an interface must provide an implementation for all of the methods declared in the interface. A class can implement multiple interfaces, but can only inherit from one base class.
+
+### Model-Driven Design
+
+#### Domain Models
+A domain model is a representation of a specific area of knowledge or business that is used to model the objects and concepts within that domain, and to capture the relationships and constraints between them. In object-oriented programming (OOP), a domain model is typically represented by a set of classes and interfaces, with each class or interface representing a specific concept or object within the domain.
+
+A domain model is used to provide a clear and consistent representation of the problem domain, and to capture the business requirements and constraints of the system. It is also used to guide the design of the system and to ensure that the system accurately reflects the real-world problem it is intended to solve.
+
+#### Anemic Models
+An Anemic model, also known as an anemic domain model, is a type of domain model in which the domain objects only contain data (attributes) and lack behavior. An anemic model often results in the use of data-transfer objects (DTOs) and service layer to handle the behavior.
+
+An anemic model is considered an anti-pattern in object-oriented programming (OOP) because it violates the principles of encapsulation and separation of concerns. In an anemic model, the behavior is separated from the data, and is typically implemented in a separate service layer, which can lead to a complex, tightly coupled, and hard-to-maintain codebase.
+
+#### Domain Language
+A domain language is a specific vocabulary and set of concepts used to describe and communicate about a specific area of knowledge or business. In software development, a domain language is used to model the objects and concepts within a specific domain, and to capture the relationships and constraints between them.
+
+A domain language is used to provide a common understanding of the problem domain among all stakeholders, including developers, business analysts, and domain experts. It is also used to ensure that the software system accurately reflects the real-world problem it is intended to solve.
+
+#### Class Invariants
+A class invariant is a set of conditions that must be true for any object of a class, at any point in time. In object-oriented programming (OOP), class invariants are used to define the valid states of an object and to ensure that the object always remains in a valid state.
+
+Class invariants are typically defined in the constructor of a class and are enforced through the use of private methods and data members that are used to validate the state of the object. They are also checked in the class's methods before and after any operation that can change the state of the object.
+
+#### Layered Architecture
+A layered architecture is a software design pattern in which the functionality of a system is divided into a set of layers, with each layer having a specific responsibility and interacting with the layers above and below it. The main idea behind a layered architecture is to separate the concerns of the system into distinct and independent layers, making the code more modular, easier to understand, test, and modify.
+
+There are several types of layered architectures, but a common one is the three-layer architecture which consists of:
+* Presentation Layer
+* Business Layer
+* Data Access Layer
+
+#### Additional Resources:
+* Primary Principles of OOPs
+    * [Inheritance](https://en.wikipedia.org/wiki/Inheritance_(object-oriented_programming))
+    * [Polymorphism](https://www.bmc.com/blogs/polymorphism-programming/)
+    * [Encapsulation](https://en.wikipedia.org/wiki/Encapsulation_(computer_programming))
+
+* Paradigm Features
+    * [Abstact Classes](https://www.theserverside.com/definition/abstract-class)
+
+* Model-Driven Design
+    * [Domain Model](https://en.wikipedia.org/wiki/Domain_model)
+    * [Anemic Model](https://en.wikipedia.org/wiki/Anemic_domain_model)
+    * [Software Architecture Patterns — Layered Architecture](https://priyalwalpita.medium.com/software-architecture-patterns-layered-architecture-a3b89b71a057)
+
+
+## Design Principles
+
+### SOLID
+SOLID programming design is a philosophy and approach to creating more robust, flexible, and scalable software systems that maintain integrity over time. As a developer, it is important to understand the right way and wrong way to write code. In this article, we will detail each of the SOLID design principles in context so that you can apply them to your work.
+
+SOLID is a popular set of design principles that developers use when creating object-oriented software. SOLID is an acronym that stands for five key design principles:
+
+* **S**ingle responsibility principle - "A class should have one, and only one, reason to change."
+* **O**pen-closed principle - “You should be able to extend a class’s behavior without modifying it.”
+* **L**iskov substitution principle - "To build software systems from interchangeable parts, those parts must adhere to a contract that allows those parts to be substituted one for another.”
+* **I**nterface segregation principle - "Make fine grained interfaces that are client-specific. Clients should not be forced to implement interfaces they do not use."
+* **D**ependency inversion principle - "High level modules should not depend upon low level modules. Both should depend on abstractions…abstractions should not depend on details. Details should depend upon abstractions."
+
+### DRY
+DRY (Don't Repeat Yourself) is a software development principle that suggests that code should not have duplicate functionality. The idea is to keep the codebase as simple as possible by eliminating redundancy and duplication. The goal is to reduce complexity and improve maintainability by ensuring that each piece of knowledge is expressed in a single, unambiguous way within the system.
+
+The DRY principle is closely related to the Single Responsibility Principle (SRP) and the Open-Closed Principle (OCP), which are part of the SOLID principles. The DRY principle aims to reduce the amount of duplicate code by creating abstractions that can be reused across the system.
+
+### YAGNI
+YAGNI (You Ain't Gonna Need It) is a software development principle that suggests that developers should not add functionality to a codebase unless it is immediately necessary. The idea is to avoid creating unnecessary complexity in the codebase by only adding features that are actually needed.
+
+The YAGNI principle is closely related to the Single Responsibility Principle (SRP) and the Open-Closed Principle (OCP), which are part of the SOLID principles. YAGNI aims to keep the codebase as simple as possible by avoiding the creation of unnecessary abstractions and functionality.
+
+#### Additional Resources:
+* [SOLID Principles in Object Oriented Design](https://www.bmc.com/blogs/solid-design-principles/)
+* [Solid Principles](https://khalilstemmler.com/articles/solid-principles/solid-typescript/)
+
+
+## Design Patterns
+Design patterns are general solutions to common problems that arise in software development. They provide a way to describe and communicate proven solutions to common design problems and they provide a common vocabulary for design. They are not specific to any particular programming language or technology, but rather describe the problem and the solution in a way that can be applied to many different contexts.
+
+There are several different types of design patterns, including:
+
+* Creational patterns
+* Structural patterns
+* Behavioral patterns
+* Architectural patterns
+
+### Creational Patterns
+Creational design patterns provide various object creation mechanisms, which increase flexibility and reuse of existing code.
+
+#### 1. Singleton
+Singleton is a creational design pattern that lets you ensure that a class has only one instance, while providing a global access point to this instance.
+
+All implementation of Singleton have two steps in common:
+1. Make the default constructor private, to prevent other objects from using the new operator with the Singleton class.
+2. Create a static creation method that acts as a constructor. Under the hood, this method calls the private constructor to create an object and saves it in a static field. All following calls to this method return the cached object.
+
+![Singleton Pattern](./files/images/singleton.png)
+The Singleton class declares the static method `getInstance` that returns the same instance of its own class.
+
+The Singleton’s constructor should be hidden from the client code. Calling the `getInstance` method should be the only way of getting the Singleton object.
+
+Different approaches to singleton pattern implementation:
+
+1. Eager Initialization:
+    The instance of the singleton class is created at the time of class loading. The drawback to eager initialization is that the method is created even though the client application might not be using it.
+
+```java
+public class EagerInitializedSingleton {
+
+    private static final EagerInitializedSingleton instance = new EagerInitializedSingleton();
+
+    // private constructor to avoid client applications using the constructor
+    private EagerInitializedSingleton(){}
+
+    public static EagerInitializedSingleton getInstance() {
+        return instance;
+    }
+}
+```
+
+2. Static Block Initialization:
+    Static block initialization implementation is similar to eager initialization, except that instance of the class is created in the static block that provides the option for exception handling.
+
+```java
+public class StaticBlockSingleton {
+
+    private static StaticBlockSingleton instance;
+
+    private StaticBlockSingleton(){}
+
+    // static block initialization for exception handling
+    static {
+        try {
+            instance = new StaticBlockSingleton();
+        } catch (Exception e) {
+            throw new RuntimeException("Exception occurred in creating singleton instance");
+        }
+    }
+
+    public static StaticBlockSingleton getInstance() {
+        return instance;
+    }
+}
+```
+
+3. Lazy Initialization:
+    Lazy initialization method to implement the singleton pattern creates the instance in the global access method. This implementation works fine in the case of the single-threaded environment, but when it comes to multi-threaded systems, it can cause issues if multiple threads are inside the if condition at the same time. It will destroy the singleton pattern and both threads will get different instances of the singleton class.
+
+```java
+public class LazyInitializedSingleton {
+
+    private static LazyInitializedSingleton instance;
+
+    private LazyInitializedSingleton(){}
+
+    public static LazyInitializedSingleton getInstance() {
+        if (instance == null) {
+            instance = new LazyInitializedSingleton();
+        }
+        return instance;
+    }
+}
+```
+
+4. Thread Safe Singleton:
+A simple way to create a thread-safe singleton class is to make the global access method synchronized so that only one thread can execute this method at a time. The implementation works fine and provides thread-safety, but it reduces the performance because of the cost associated with the synchronized method.
+
+```java
+public class ThreadSafeSingleton {
+
+    private static ThreadSafeSingleton instance;
+
+    private ThreadSafeSingleton(){}
+
+    public static synchronized ThreadSafeSingleton getInstance() {
+        if (instance == null) {
+            instance = new ThreadSafeSingleton();
+        }
+        return instance;
+    }
+
+}
+```
+
+5. Bill Pugh Singleton Implemntation: 
+    Prior to Java 5, the Java memory model had a lot of issues, and the previous approaches used to fail in certain scenarios where too many threads tried to get the instance of the singleton class simultaneously. So Bill Pugh came up with a different approach to create the singleton class using an inner static helper class. Notice the private inner static class that contains the instance of the singleton class. When the singleton class is loaded, SingletonHelper class is not loaded into memory and only when someone calls the getInstance() method, this class gets loaded and creates the singleton class instance. This is the most widely used approach for the singleton class as it doesn’t require synchronization.
+
+```java
+public class BillPughSingleton {
+
+    private BillPughSingleton(){}
+
+    private static class SingletonHelper {
+        private static final BillPughSingleton INSTANCE = new BillPughSingleton();
+    }
+
+    public static BillPughSingleton getInstance() {
+        return SingletonHelper.INSTANCE;
+    }
+}
+```
+
+#### 2. Factory
+The factory design pattern is used when we have a superclass with multiple sub-classes and based on input, we need to return one of the sub-class. This pattern takes out the responsibility of the instantiation of a class from the client program to the factory class.
+
+![Factory Pattern](./files/images/factory.png)
+
+1. Computer (Super Class) - Super class in factory design pattern can be an interface, abstract class or a normal java class.
+2. PC (Subclass 1), Server(Subclass 2)
+3. ComputerFactory (Factory Class) 
+
+Some important points about Factory Design Pattern method are:
+1. We can keep Factory class Singleton or we can keep the method that returns the subclass as static
+2. Notice that based on the input parameter, different subclass is created and returned. getComputer is the factory method.
+
+Example:
+
+```java
+// Superclass
+public abstract class Computer {
+	public abstract String getRAM();
+	public abstract String getHDD();
+	public abstract String getCPU();
+}
+
+//Subclass 1
+public class PC extends Computer {
+	private String ram;
+	private String hdd;
+	private String cpu;
+
+	public PC(String ram, String hdd, String cpu){
+		this.ram=ram;
+		this.hdd=hdd;
+		this.cpu=cpu;
+	}
+}
+
+// Subclass 2
+public class Server extends Computer {
+	private String ram;
+	private String hdd;
+	private String cpu;
+	
+	public Server(String ram, String hdd, String cpu){
+		this.ram=ram;
+		this.hdd=hdd;
+		this.cpu=cpu;
+	}
+}
+
+// Factory Class
+public class ComputerFactory {
+
+	public static Computer getComputer(String type, String ram, String hdd, String cpu){
+		if("PC".equalsIgnoreCase(type)) return new PC(ram, hdd, cpu);
+		else if("Server".equalsIgnoreCase(type)) return new Server(ram, hdd, cpu);
+		
+		return null;
+	}
+}
+```
+
+#### 3. Abstract Factory
+In the Abstract Factory pattern, we get rid of if-else block and have a factory class for each sub-class. Then an Abstract Factory class that will return the sub-class based on the input factory class. 
+
+```java
+// SuperClass
+public abstract class Computer {
+     
+    public abstract String getRAM();
+    public abstract String getHDD();
+    public abstract String getCPU();
+}
+
+// subclass 1
+public class PC extends Computer {
+ 
+    private String ram;
+    private String hdd;
+    private String cpu;
+     
+    public PC(String ram, String hdd, String cpu){
+        this.ram=ram;
+        this.hdd=hdd;
+        this.cpu=cpu;
+    }
+}
+
+// subclass 2
+public class Server extends Computer {
+ 
+    private String ram;
+    private String hdd;
+    private String cpu;
+     
+    public Server(String ram, String hdd, String cpu){
+        this.ram=ram;
+        this.hdd=hdd;
+        this.cpu=cpu;
+    }
+}
+
+// abstract factory interface
+public interface ComputerAbstractFactory {
+
+	public Computer createComputer();
+
+}
+
+// factory class for subclass 1
+public class PCFactory implements ComputerAbstractFactory {
+
+	private String ram;
+	private String hdd;
+	private String cpu;
+	
+	public PCFactory(String ram, String hdd, String cpu){
+		this.ram=ram;
+		this.hdd=hdd;
+		this.cpu=cpu;
+	}
+}
+
+// factory class for subclass 2
+public class ServerFactory implements ComputerAbstractFactory {
+
+	private String ram;
+	private String hdd;
+	private String cpu;
+	
+	public ServerFactory(String ram, String hdd, String cpu){
+		this.ram=ram;
+		this.hdd=hdd;
+		this.cpu=cpu;
+	}
+}
+
+```
+
+```java
+// Product interface
+interface Pizza {
+    void prepare();
+    void bake();
+    void cut();
+    void box();
+}
+
+// ConcreteProduct implementations
+class MargheritaPizza implements Pizza {
+    // Implementations of Pizza methods
+}
+
+class PepperoniPizza implements Pizza {
+    // Implementations of Pizza methods
+}
+
+// Creator interface
+interface PizzaFactory {
+    Pizza createPizza();
+}
+
+// ConcreteCreator implementations
+class MargheritaPizzaFactory implements PizzaFactory {
+    @Override
+    public Pizza createPizza() {
+        return new MargheritaPizza();
+    }
+}
+
+class PepperoniPizzaFactory implements PizzaFactory {
+    @Override
+    public Pizza createPizza() {
+        return new PepperoniPizza();
+    }
+}
+
+// Client code
+public class PizzaStore {
+    public static void main(String[] args) {
+        PizzaFactory pizzaFactory = new MargheritaPizzaFactory();
+        Pizza pizza = pizzaFactory.createPizza();
+        // Use the pizza object
+    }
+}
+
+```
+
+Abstract Factory pattern is “factory of factories” and can be easily extended to accommodate more products, for example we can add another sub-class Laptop and a factory LaptopFactory.
+
+#### 4. Builder
+Builder pattern was introduced to solve some of the problems with Factory and Abstract Factory design patterns when the Object contains a lot of attributes. There are three major issues with Factory and Abstract Factory design patterns when the Object contains a lot of attributes.
+
+1. Too Many arguments to pass from client program to the Factory class that can be error prone because most of the time, the type of arguments are same and from client side its hard to maintain the order of the argument.
+2. Some of the parameters might be optional but in Factory pattern, we are forced to send all the parameters and optional parameters need to send as NULL.
+3. If the object is heavy and its creation is complex, then all that complexity will be part of Factory classes that is confusing.
+
+Builder pattern solves the issue with large number of optional parameters and inconsistent state by providing a way to build the object step-by-step and provide a method that will actually return the final Object.
+
+![Builder Pattern](./files/images/builder.png)
+
+Implementation of builder pattern:
+
+*Step 1: Define the product* 
+```java
+public class Pizza {
+    private String dough;
+    private String sauce;
+    private String topping;
+
+    // Constructor and getters
+}
+```
+
+*Step 2: Create the Builder interface*
+```java
+public interface PizzaBuilder {
+    PizzaBuilder buildDough(String dough);
+    PizzaBuilder buildSauce(String sauce);
+    PizzaBuilder buildTopping(String topping);
+    Pizza build();
+}
+```
+
+*Step 3: Implement the Concrete Builder*
+```java
+public class SpicyPizzaBuilder implements PizzaBuilder {
+    private Pizza pizza;
+
+    public SpicyPizzaBuilder() {
+        this.pizza = new Pizza();
+    }
+
+    @Override
+    public PizzaBuilder buildDough(String dough) {
+        pizza.setDough(dough);
+        return this;
+    }
+
+    @Override
+    public PizzaBuilder buildSauce(String sauce) {
+        pizza.setSauce(sauce);
+        return this;
+    }
+
+    @Override
+    public PizzaBuilder buildTopping(String topping) {
+        pizza.setTopping(topping);
+        return this;
+    }
+
+    @Override
+    public Pizza build() {
+        return pizza;
+    }
+}
+```
+
+*Step 4: Create the director (Optinal)*
+```java
+public class Director {
+    private PizzaBuilder pizzaBuilder;
+
+    public Director(PizzaBuilder pizzaBuilder) {
+        this.pizzaBuilder = pizzaBuilder;
+    }
+
+    public Pizza constructPizza() {
+        return computerBuilder
+            .buildDough("Thin Crust")
+            .buildSauce("Spicy Tandoori")
+            .buildTopping("Chicken")
+            .build();
+    }
+}
+```
+
+*Step 5: Client Code*
+```java
+public class Client {
+    public static void main(String[] args) {
+        PizzaBuilder spicyPizzaBuilder = new SpicyPizzaBuilder();
+        Director director = new Director(spicyPizzaBuilder);
+        Pizza pizza = director.constructPizza();
+
+        // Access the constructed Computer object
+        System.out.println(pizza);
+    }
+}
+```
+
+#### 5. Prototype
+Prototype design pattern is used when the Object creation is a costly affair and requires a lot of time and resources and you have a similar object already existing. Prototype pattern provides a mechanism to copy the original object to a new object and then modify it according to our needs. Prototype design pattern uses java cloning to copy the object.
+
+Prototype design pattern mandates that the Object which you are copying should provide the copying feature. It should not be done by any other class. However whether to use shallow or deep copy of the Object properties depends on the requirements and its a design decision.
+
+
+### Structural Design Patterns
+These patterns help in organizing classes and objects into larger structures, making the system more robust and easier to maintain. They often involve concepts like inheritance and composition to define relationships between entities, ensuring that changes to one part of the system have minimal impact on others.
+
+
+#### Additional Resources
+* [Catelog of Design Patterns](https://refactoring.guru/design-patterns/catalog)
+* [Gang of four Design Patters](https://www.digitalocean.com/community/tutorials/gangs-of-four-gof-design-patterns)
+
+* Creational Patterns
+    * [Singleton](https://www.digitalocean.com/community/tutorials/java-singleton-design-pattern-best-practices-examples)
+    * [Factory](https://www.digitalocean.com/community/tutorials/factory-design-pattern-in-java)
+    * [Abstract Factory ](https://www.digitalocean.com/community/tutorials/abstract-factory-design-pattern-in-java)
+    * [Builder](https://www.digitalocean.com/community/tutorials/builder-design-pattern-in-java)
+    * [Prototype](https://www.digitalocean.com/community/tutorials/prototype-design-pattern-in-java)
+
+* Structural Design Patterns
+    
+
