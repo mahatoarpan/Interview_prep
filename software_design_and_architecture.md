@@ -581,6 +581,85 @@ Prototype design pattern mandates that the Object which you are copying should p
 ### Structural Design Patterns
 These patterns help in organizing classes and objects into larger structures, making the system more robust and easier to maintain. They often involve concepts like inheritance and composition to define relationships between entities, ensuring that changes to one part of the system have minimal impact on others.
 
+#### 1. Adapter
+Adapter design pattern is one of the structural design pattern and it is used so that two unrelated interfaces can work together. It is often used to make existing classes work with others without modifying their source code. The pattern involves creating an adapter class that bridges the gap between the interfaces, allowing them to communicate effectively.
+
+Implementation of Adapter Design Pattern:
+
+Suppose you are having an IPhone6s and your friend is having an IPhone4s now you went to your friend’s house but you forgot to carry your charger with you and you need to charge your phone and the charger you need is not available . Now what will you do‍🤷‍♀️? So here in this situation an adapter is going to help us . You will use an adapter to charge your IPhone6s from IPhone4s charger . So here you have not changed the IPhone4s charger to IPhone6s charger you just adapted the situation and have your work done 
+
+*Step 1: Define the Target interface - This interface should specify the operations that the client code expects* 
+
+```java
+public interface IPhone
+{
+    public void OnCharge();
+}
+```
+
+*Step 2: Implement the Adaptee Class - This class represents the existing component with an incompatible interface. *
+
+```java
+public interface Charger
+{
+    public void charge();
+}
+```
+
+```java
+public class Iphone4sCharger implements Charger
+{
+    Iphone4sCharger(){};
+
+    public void charge()
+    {
+        System.out.println("charging with 4s charger");
+    }
+}
+```
+
+*Step 3: Create the Adapter class - The Adapter class implements the Target interface and internally uses an instance of the Adaptee class. It adapts the Adaptee’s interface to match the Target interface by delegating the calls appropriately.*
+
+```java
+public class Iphone4sTo6sAdapter implements Charger
+{
+    Iphone4sCharger iphone4sCharger;
+
+    Iphone4sTo6sAdapter()
+    {
+        iphone4sCharger = new Iphone4sCharger();
+    }
+
+    @Override
+    public void charge()
+    {
+        iphone4sCharger.charge();
+    }
+}
+```
+
+*Step 4: Connect the client code to adapter*
+
+```java
+public class IPhone6s implements IPhone
+{
+    Charger Iphone4sTo6sAdapter;
+    public IPhone6s(Charger iphone4sTo6sAdapter)
+    {
+        this.Iphone4sTo6sAdapter = iphone4sTo6sAdapter;
+    };
+
+    @Override
+    public void OnCharge()
+    {
+        Iphone4sTo6sAdapter.charge();
+    }
+}
+```
+
+#### 2. Composite Pattern
+Composite Design Pattern is a structural design pattern which is used when we have to represent a part-whole hierarchy. The composite pattern is meant to allow treating individual objects and compositions of objects, or “composites” in the same way.
+
 
 #### Additional Resources
 * [Catelog of Design Patterns](https://refactoring.guru/design-patterns/catalog)
@@ -594,5 +673,5 @@ These patterns help in organizing classes and objects into larger structures, ma
     * [Prototype](https://www.digitalocean.com/community/tutorials/prototype-design-pattern-in-java)
 
 * Structural Design Patterns
-    
+    * [Adapter](https://medium.com/@akshatsharma0610/adapter-design-pattern-in-java-fa20d6df25b8)
 
