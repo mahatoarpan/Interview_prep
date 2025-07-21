@@ -151,6 +151,11 @@ YAGNI (You Ain't Gonna Need It) is a software development principle that suggest
 
 The YAGNI principle is closely related to the Single Responsibility Principle (SRP) and the Open-Closed Principle (OCP), which are part of the SOLID principles. YAGNI aims to keep the codebase as simple as possible by avoiding the creation of unnecessary abstractions and functionality.
 
+### Composition over Inheritance
+Composition over inheritance is a programming principle that suggests that it is better to use composition, a mechanism for assembling objects, to create complex objects, rather than using inheritance, which is a mechanism for creating new classes based on existing ones.
+
+Inheritance is a powerful mechanism for creating reusable code, but it can also lead to tightly coupled, hard-to-maintain code. This is because inherited classes are tightly bound to their parent classes and any changes made to the parent class will affect all of its child classes. This makes it hard to change or extend the code without affecting the entire class hierarchy.
+
 #### Additional Resources:
 * [SOLID Principles in Object Oriented Design](https://www.bmc.com/blogs/solid-design-principles/)
 * [Solid Principles](https://khalilstemmler.com/articles/solid-principles/solid-typescript/)
@@ -660,6 +665,1293 @@ public class IPhone6s implements IPhone
 #### 2. Composite Pattern
 Composite Design Pattern is a structural design pattern which is used when we have to represent a part-whole hierarchy. The composite pattern is meant to allow treating individual objects and compositions of objects, or “composites” in the same way.
 
+ Composite Pattern consists of following objects.
+
+* Base Component - is the base interface for all the objects in the composition. It should be either an interface or an abstract class with the common methods to manage the child composites.
+* Leaf - implements the default behavior of the base component. It doesn’t contain a reference to the other objects.
+* Composite - has leaf elements. It implements the base component methods and defines the child-related operations.
+* Client - has access to the composition elements by using the base component object.
+
+Implementation of Composite Design Pattern
+
+```java
+// Component
+public interface Component
+{
+    public void showPrice();
+}
+```
+
+```java
+// Leaf
+public class Leaf implements Component
+{
+    String name;
+    Double price;
+    public Leaf(){}
+    public Leaf(String name,double price)
+    {
+        this.name = name;
+        this.price = price;
+    }
+
+    @Override
+    public void showPrice() {
+        System.out.println(this.price);
+    }
+}
+```
+
+```java
+// Composite Object
+public class Composite implements Component {
+    String name;
+    ArrayList<Component> components;
+
+    public Composite(){}
+
+    public Composite(String name)
+    {
+        this.name = name;
+        components = new ArrayList<>();
+    }
+
+    @Override
+    public void showPrice()
+    {
+        for (Component c : components)
+        {
+            c.showPrice();
+        }
+    }
+
+    public void add(Component subComponent)
+    {
+        components.add(subComponent);
+    }
+}
+```
+
+```java
+// Client
+public class Main
+{
+    public static void main(String[] args)
+    {
+        Component hdd       = new Leaf("hdd" , 4000);
+        Component keyboard  = new Leaf("keyboard",1000);
+        Component mouse     = new Leaf("mouse",500);
+        Component ram       = new Leaf("ram",3000);
+        Component processor = new Leaf("Processor",10000);
+
+        Composite computer = new Composite("computer");
+        
+        Composite motherboard = new Composite("motherboard");
+        motherboard.add(ram);
+        motherboard.add(processor);
+
+        Composite cabinet  = new Composite("cabinet");
+        cabinet.add(hdd);
+        cabinet.add(motherboard);
+
+        Composite peripherals     = new Composite("peripherals");
+        peripherals.add(keyboard);
+        peripherals.add(mouse);
+
+        computer.add(cabinet);
+        computer.add(peripherals);
+
+        computer.showPrice();
+    }
+}
+```
+
+The Composite Design Pattern is a powerful pattern for creating tree-like structures of objects. It allows you to treat individual objects and groups of objects uniformly. 
+
+#### 3. Proxy Pattern
+The Proxy Design Pattern is a structural design pattern that provides an intermediary for accessing a real object. The proxy object controls the access to the real object, adding an additional layer of functionality, such as logging, caching, or access control.
+
+Key Components:
+1. Subject Interface - Defines the common interface for the proxy and real object.
+2. Real Subject - The actual obejct that perfome the teal operation. Implements the subject interface.
+3. Proxy - Acts as an intermediary. Contains a refernce to the real subject. Adds functionality before delegating the request to the real subject.
+4. Client - The client interacts with the proxy, which in turn interacts with the real object.
+
+Implementation:
+```java
+// Subject Interface
+public interface Internet {
+    void connectTo(String serverHost) throws Exception;
+}
+```
+```java
+// Real Subject
+public class RealInternet implements Internet {
+    @Override
+    public void connectTo(String serverHost) {
+        System.out.println("Connecting to " + serverHost);
+    }
+}
+```
+```java
+// Proxy
+public class ProxyInternet implements Internet {
+    private RealInternet realInternet = new RealInternet();
+    private static List<String> bannedSites;
+
+    static {
+        bannedSites = new ArrayList<>();
+        bannedSites.add("abc.com");
+        bannedSites.add("xyz.com");
+        bannedSites.add("banned.com");
+    }
+
+    @Override
+    public void connectTo(String serverHost) throws Exception {
+        if (bannedSites.contains(serverHost.toLowerCase())) {
+            throw new Exception("Access Denied to " + serverHost);
+        }
+        realInternet.connectTo(serverHost);
+    }
+}
+```
+
+```java
+// Client 
+public class Main {
+    public static void main(String[] args) {
+        Internet internet = new ProxyInternet();
+
+        try {
+            internet.connectTo("example.com");
+            internet.connectTo("abc.com"); // This site is banned
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            internet.connectTo("stackoverflow.com");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+```
+
+#### 4. Flyweight Pattern
+The Flyweight pattern is a structural design pattern that minimizes memory usage by sharing common objects as much as possible. It is particularly useful in scenarios where a large number of similar objects need to be created and managed. The pattern achieves this by separating an object’s intrinsic state (shared among multiple objects) from its extrinsic state (unique to each object).
+
+Components:
+1. Flyweight Interface - This defines the interface for concrete flyweights. Typically, it includes a method to accept and process the extrinsic state.
+2. Concrete Flyweight - These are the actual flyweight objects that implement the Flyweight interface. They store intrinsic states that can be shared among multiple objects.
+3. Flyweight Factory - This is responsible for creating and managing flyweight objects. It ensures that flyweights are shared and reused as much as possible.
+4. Client - The client code uses flyweights to create and manipulate objects. It passes the extrinsic state to the flyweights when needed.
+
+Implementation:
+```java
+// Flyweight Interface
+interface GameObject {
+    void render(String player);
+}
+```
+```java
+// Concrete Flyweight
+class Tree implements GameObject {
+    private final String type;
+
+    public Tree(String type) {
+        this.type = type;
+    }
+
+    @Override
+    public void render(String player) {
+        System.out.println("Rendering a " + type + " for player " + player);
+    }
+}
+```
+```java
+// Flyweight Factory
+class GameObjectFactory {
+    private final Map<String, GameObject> gameObjects = new HashMap<>();
+
+    public GameObject getGameObject(String type) {
+        return gameObjects.computeIfAbsent(type, Tree::new);
+    }
+}
+```
+```java
+// Client
+public class Game {
+    public static void main(String[] args) {
+        GameObjectFactory gameObjectFactory = new GameObjectFactory();
+
+        // Simulate rendering game objects for multiple players
+        String[] players = {"Player 1", "Player 2", "Player 3"};
+
+        for (String player : players) {
+            GameObject tree = gameObjectFactory.getGameObject("Tree");
+            tree.render(player);
+        }
+    }
+}
+```
+
+#### 5. Facade Pattern
+The Facade Design Pattern is a structural pattern that provides a simplified interface to a set of interfaces in a subsystem, making it easier to use. It involves creating a unified interface that sits on top of a set of interfaces to simplify the usage for clients.
+
+Implementation:
+```java
+// Services
+
+class AccountService {
+    public void getAccountDetails(String accountId) {
+        System.out.println("Fetching account details for account ID: " + accountId);
+    }
+}
+
+class TransferService {
+    public void transferFunds(String fromAccount, String toAccount, double amount) {
+        System.out.println("Transferring " + amount + " from account " + fromAccount + " to account " + toAccount);
+    }
+}
+
+class BillPaymentService {
+    public void payBill(String accountId, String billId, double amount) {
+        System.out.println("Paying bill " + billId + " from account " + accountId + " with amount " + amount);
+    }
+}
+```
+
+```java
+// Facade
+class BankingFacade {
+    private AccountService accountService;
+    private TransferService transferService;
+    private BillPaymentService billPaymentService;
+
+    public BankingFacade() {
+        this.accountService = new AccountService();
+        this.transferService = new TransferService();
+        this.billPaymentService = new BillPaymentService();
+    }
+
+    public void getAccountDetails(String accountId) {
+        accountService.getAccountDetails(accountId);
+    }
+
+    public void transferFunds(String fromAccount, String toAccount, double amount) {
+        transferService.transferFunds(fromAccount, toAccount, amount);
+    }
+
+    public void payBill(String accountId, String billId, double amount) {
+        billPaymentService.payBill(accountId, billId, amount);
+    }
+}
+```
+
+```java
+// Client
+public class Main {
+    public static void main(String[] args) {
+        BankingFacade bankingFacade = new BankingFacade();
+        bankingFacade.getAccountDetails("123456");
+        bankingFacade.transferFunds("123456", "654321", 100.0);
+        bankingFacade.payBill("123456", "BILL001", 50.0);
+    }
+}
+```
+
+#### 6. Bridge Pattern
+Bridge pattern decouples an abstraction from its implementation so that the two can vary independently.
+
+Key Components:
+1. Abstraction: This is the high-level interface that defines the abstract methods or operations that the clients will use.
+2. Implementor: This is the interface or abstract class that defines the methods that the concrete implementors must implement.
+3. Concrete Abstraction: These are concrete classes that extend the Abstraction and use an Implementor to perform specific operations.
+4. Concrete Implementor: These are concrete classes that implement the Implementor interface and provide actual implementations of the methods defined in the Implementor.
+
+Implementation:
+
+```java
+// Implementor interface
+interface DrawingAPI {
+    void drawCircle(int x, int y, int radius);
+}
+```
+
+```java
+// Concrete Implementors
+class DrawingAPI1 implements DrawingAPI {
+    @Override
+    public void drawCircle(int x, int y, int radius) {
+        System.out.printf("API1: Drawing circle at (%d, %d) with radius %d%n", x, y, radius);
+    }
+}
+
+class DrawingAPI2 implements DrawingAPI {
+    @Override
+    public void drawCircle(int x, int y, int radius) {
+        System.out.printf("API2: Drawing circle at (%d, %d) with radius %d%n", x, y, radius);
+    }
+}
+```
+
+```java
+// Abstraction
+abstract class Shape {
+    protected DrawingAPI drawingAPI;
+
+    protected Shape(DrawingAPI drawingAPI) {
+        this.drawingAPI = drawingAPI;
+    }
+
+    abstract void draw();
+}
+```
+
+```java
+// Concrete Abstractions
+class Circle extends Shape {
+    private int x, y, radius;
+
+    public Circle(int x, int y, int radius, DrawingAPI drawingAPI) {
+        super(drawingAPI);
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+    }
+
+    @Override
+    void draw() {
+        drawingAPI.drawCircle(x, y, radius);
+    }
+}
+
+class Square extends Shape {
+    // Similar to Circle, but for squares
+}
+```
+
+#### 7. Decorator Pattern
+The Decorator pattern is a structural design pattern that allows you to enhance or modify the behavior of objects at runtime. It achieves this by creating a set of decorator classes that are used to wrap concrete components. Each decorator adds a specific feature or behavior to the component, and you can stack multiple decorators to create various combinations.
+
+Implementation:
+
+```java
+// Component Interface
+interface Pizza {
+    String getDescription();
+    double getCost();
+}
+```
+
+```java
+// Concrete Component
+class PlainPizza implements Pizza {
+    @Override
+    public String getDescription() {
+        return "Plain Pizza";
+    }
+
+    @Override
+    public double getCost() {
+        return 5.0;
+    }
+}
+```
+
+```java
+// Decorator
+abstract class PizzaDecorator implements Pizza {
+    protected Pizza decoratedPizza;
+
+    public PizzaDecorator(Pizza pizza) {
+        this.decoratedPizza = pizza;
+    }
+}
+```
+
+```java
+// Concrete Decorators
+class CheeseDecorator extends PizzaDecorator {
+    public CheeseDecorator(Pizza pizza) {
+        super(pizza);
+    }
+
+    @Override
+    public String getDescription() {
+        return decoratedPizza.getDescription() + ", Cheese";
+    }
+
+    @Override
+    public double getCost() {
+        return decoratedPizza.getCost() + 1.5;
+    }
+}
+
+class PepperoniDecorator extends PizzaDecorator {
+    public PepperoniDecorator(Pizza pizza) {
+        super(pizza);
+    }
+
+    @Override
+    public String getDescription() {
+        return decoratedPizza.getDescription() + ", Pepperoni";
+    }
+
+    @Override
+    public double getCost() {
+        return decoratedPizza.getCost() + 2.0;
+    }
+}
+
+```
+
+```java
+public class DecoratorMain {
+    public static void main(String[] args) {
+        // Create a plain pizza
+        Pizza pizza = new PlainPizza();
+
+        // Decorate the pizza with cheese and pepperoni
+        pizza = new CheeseDecorator(pizza);
+        pizza = new PepperoniDecorator(pizza);
+
+        // Get the description and cost of the decorated pizza
+        System.out.println("Description: " + pizza.getDescription());
+        System.out.println("Cost: $" + pizza.getCost());
+    }
+}
+```
+
+### Behavioral Design Patterns
+They describe how objects communicate and interact with each other to accomplish a task. The goal is to define efficient, flexible, and loosely coupled communication channels between objects, allowing them to collaborate without becoming overly dependent on each other’s concrete implementations. These patterns focus on the flow of control and data between objects, enabling dynamic behavior and easier extension of functionality.
+
+#### 1. Template Method Pattern
+The Template Design Pattern is a behavioral design pattern that defines the basic structure of an algorithm in a superclass, while allowing subclasses to provide specific implementations of certain steps of the algorithm without modifying its overall structure. It promotes code reuse and enforces a common algorithm structure across multiple subclasses.
+
+![Template](./files/images/template_method.png)
+
+Implementation:
+
+```java
+// Template class
+abstract public class PhoneOrderTemp
+{
+    final void createOrder()
+    {
+        //series of method invocation
+        selectProduct();
+        packProduct();
+        makePayment();
+        deliverProduct();
+    }
+    abstract void selectProduct();
+    abstract void makePayment();
+    void packProduct() {
+        System.out.println("paking the product");
+    }
+
+    abstract void deliverProduct();
+}
+```
+
+```java
+//Extended classes
+public class OnlineStore extends PhoneOrderTemp
+{
+    @Override
+    void selectProduct()
+    {
+        System.out.println("selecting the product in online store");
+    }
+
+    @Override
+    void makePayment() {
+        System.out.println("making the payment in online store");
+    }
+
+    @Override
+    void deliverProduct() {
+        System.out.println("product delivered at home of the client");
+    }
+}
+
+public class OfflineStore extends PhoneOrderTemp
+{
+    public OfflineStore()
+    {
+
+    }
+    @Override
+    void selectProduct()
+    {
+        System.out.println("selecting the product in offline store");
+    }
+
+    @Override
+    void makePayment() {
+        System.out.println("making the payment in offline store");
+    }
+
+    @Override
+    void deliverProduct() {
+        System.out.println("product deliverd in hands in offline store");
+    }
+}
+```
+
+```java
+// Client Code
+public class Main {
+    public static void main(String[] args) {
+        PhoneOrderTemp offlineStore = new OfflineStore();
+        offlineStore.createOrder();
+
+        PhoneOrderTemp onlineStore = new OnlineStore();
+        onlineStore.createOrder();
+    }
+}
+```
+
+#### 2. Mediator Pattern
+The Mediator Pattern is a behavioral design pattern that promotes loose coupling between objects by centralizing communication through a mediator. Instead of objects communicating directly with each other, they interact via a mediator, reducing dependencies and improving maintainability.
+
+Implementation:
+
+```java
+// Mediator interface
+interface AirTrafficControl {
+    void registerAircraft(Aircraft aircraft);
+    void sendMessage(String message, Aircraft sender);
+}
+```
+
+```java
+// Concrete Mediator
+class ATCTower implements AirTrafficControl {
+    private List<Aircraft> aircraftList = new ArrayList<>();
+    @Override
+    public void registerAircraft(Aircraft aircraft) {
+        aircraftList.add(aircraft);
+    }
+    @Override
+    public void sendMessage(String message, Aircraft sender) {
+        for (Aircraft aircraft : aircraftList) {
+            if (aircraft != sender) {
+                aircraft.receiveMessage(message);
+            }
+        }
+    }
+}
+```
+
+```java
+// Colleague
+abstract class Aircraft {
+    protected AirTrafficControl atc;
+    protected String name;
+
+    public Aircraft(AirTrafficControl atc, String name) {
+        this.atc = atc;
+        this.name = name;
+        atc.registerAircraft(this);
+    }
+    public abstract void send(String message);
+    public abstract void receiveMessage(String message);
+}
+```
+
+```java
+// Concrete Colleague
+class Boeing737 extends Aircraft {
+    public Boeing737(AirTrafficControl atc, String name) {
+        super(atc, name);
+    }
+
+    @Override
+    public void send(String message) {
+        System.out.println(name + " sends: " + message);
+        atc.sendMessage(message, this);
+    }
+    @Override
+    public void receiveMessage(String message) {
+        System.out.println(name + " receives: " + message);
+    }
+}
+class AirbusA320 extends Aircraft {
+    public AirbusA320(AirTrafficControl atc, String name) {
+        super(atc, name);
+    }
+    @Override
+    public void send(String message) {
+        System.out.println(name + " sends: " + message);
+        atc.sendMessage(message, this);
+    }
+    @Override
+    public void receiveMessage(String message) {
+        System.out.println(name + " receives: " + message);
+    }
+}
+```
+```java
+// Client Code
+public class MediatorPatternDemo {
+    public static void main(String[] args) {
+        AirTrafficControl atcTower = new ATCTower();
+        
+        Aircraft boeing = new Boeing737(atcTower, "Boeing 737");
+        Aircraft airbus = new AirbusA320(atcTower, "Airbus A320");
+        
+        boeing.send("Requesting permission to land.");
+        airbus.send("Holding position at 10,000 feet.");
+    }
+}
+```
+
+#### 3. Chain of Responsibility
+The Chain of Responsibility design pattern is a behavioral pattern that allows an object to pass a request along a chain of potential handlers until it is handled by an appropriate object. This pattern promotes loose coupling between the sender of a request and its receivers, and it allows multiple objects to have a chance to handle the request without explicitly specifying the receiver.
+
+Components:
+1. Handler: The Handler is an interface or abstract class that defines the common interface for handling requests. It typically includes a method like handleRequest().
+
+2. ConcreteHandler: ConcreteHandler classes implement the Handler interface and provide specific implementations for handling requests. Each ConcreteHandler has a reference to the next handler in the chain. It decides whether to handle the request or pass it to the next handler in the chain.
+
+3. Client: The Client initiates the request and starts the chain of handling. It is responsible for creating the chain of handlers and linking them together.
+
+Implementation:
+
+```java
+// Handler
+public abstract class RequestHandler {
+    String name;
+    RequestHandler nextHandler;
+    private RequestHandler(){
+
+    }
+    public RequestHandler(String name){
+        this.name=name;
+    }
+    abstract void setNext(RequestHandler nextHandler);
+
+    void approve (int id)
+    {
+        if(this.nextHandler != null)
+            this.nextHandler.approve(id);
+        else
+            System.out.println("request cannot be approved");
+    }
+}
+```
+
+```java
+// Concrete Handlers
+public class Manager extends RequestHandler{
+    public Manager(){
+        super("manager");
+    }
+    @Override
+    void setNext(RequestHandler nextHandler){
+        this.nextHandler=nextHandler;
+    }
+    @Override
+    void approve(int id){
+        if(id>=1 && id<=20)
+        {
+            System.out.println("Request Approved");
+        }
+        else{
+            super.approve(id);
+        }
+    }
+}
+
+public class SeniorManager extends RequestHandler{
+    public SeniorManager(){
+        super("Senior manager");
+    }
+    @Override
+    void setNext(RequestHandler nextHandler){
+        this.nextHandler=nextHandler;
+    }
+    @Override
+    void approve(int id){
+        if(id>=21 && id<=40)
+            {
+            System.out.println("Request Approved");
+        }
+        else{
+            super.approve(id);
+        }
+    }
+}
+```
+
+```java
+// Client Code
+public class Main {
+    public static void main(String[] args) {
+        RequestHandler manager=new Manager();
+        RequestHandler seniorManager=new SeniorManager();
+        RequestHandler director=new Director();
+        manager.setNext(seniorManager);
+        seniorManager.setNext(director);
+        manager.approve(19);
+        manager.approve(90);
+    }
+}
+
+```
+
+#### 4. Observer Pattern
+The Observer design pattern is a behavioral design pattern that establishes a one-to-many relationship between objects, allowing them to communicate and respond to changes in the state of a subject object .  This allows an object (known as the subject) to notify other objects (known as observers) when there is a change in its state. The Observer pattern is widely used in event-driven programming, GUIs, and even in messaging systems like Kafka.
+
+Main Components:
+1. Subject: The object that holds the state and notifies the observers.
+2. Observer: Objects that listen for state changes in the subject.
+3. ConcreteSubject: The class that implements the Subject interface.
+4. ConcreteObserver: The class that implements the Observer interface and responds to change in the subject.
+
+Implementation:
+
+```java
+// Subject interface
+interface Subject {
+    void addObserver(Observer o);
+    void removeObserver(Observer o);
+    void notifyObservers();
+}
+```
+
+```java
+// Object Interface
+interface Observer {
+    void update(float temperature, float humidity);
+}
+```
+
+```java
+// Concrete Subject
+class WeatherStation implements Subject {
+    private List<Observer> observers;
+    private float temperature;
+    private float humidity;
+    public WeatherStation() {
+        this.observers = new ArrayList<>();
+    }
+    @Override
+    public void addObserver(Observer o) {
+        observers.add(o);
+    }
+    @Override
+    public void removeObserver(Observer o) {
+        observers.remove(o);
+    }
+    @Override
+    public void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.update(temperature, humidity);
+        }
+    }
+    public void setMeasurements(float temperature, float humidity) {
+        this.temperature = temperature;
+        this.humidity = humidity;
+        notifyObservers(); // notify all observers of the change
+    }
+}
+
+```
+
+```java
+// Observer Concrete
+class WeatherDisplay implements Observer {
+    private float temperature;
+    private float humidity;   
+    @Override
+    public void update(float temperature, float humidity) {
+        this.temperature = temperature;
+        this.humidity = humidity;
+        display();
+    }
+    public void display() {
+        System.out.println("Current conditions: " + temperature + "C degrees and " + humidity + "% humidity");
+    }
+}
+```
+
+```java
+// Client 
+public class ObserverPatternDemo {
+    public static void main(String[] args) {
+        WeatherStation weatherStation = new WeatherStation();
+        
+        // Create two displays and register them as observers
+        WeatherDisplay display1 = new WeatherDisplay();
+        WeatherDisplay display2 = new WeatherDisplay();
+        
+        weatherStation.addObserver(display1);
+        weatherStation.addObserver(display2);// Simulate changes in weather data
+        weatherStation.setMeasurements(25.5f, 65.0f);
+        weatherStation.setMeasurements(27.3f, 70.0f);
+    }
+}
+```
+
+#### 5. Strategy Design Pattern
+Strategy pattern is used when we have multiple algorithm for a specific task and client decides the actual implementation to be used at runtime. It is based on the idea of encapsulating a family of algorithms into separate classes that implement a common interface.
+
+Main Components:
+1. Context: It is the class that encapsulates the data and defines the interface for accessing the algorithm.
+2. Strategy: It is an interface or abstract class that defines the common interface for all the algorithms.
+3. Concrete Strategies: These are the classes that implement the algorithm interface defined by the Strategy. Each concrete strategy provides a different implementation of the algorithm.
+
+Implementation:
+```java
+// Context class
+public class Vehicle
+{
+    Drive driveCapability;
+    public Vehicle(Drive driveCapability)
+    {
+       this.driveCapability = driveCapability;
+    }
+    public void drive()
+    {
+        driveCapability.drive();
+    }
+}
+```
+
+```java
+// Statergy Interface
+public interface Drive
+{
+    public void drive();
+}
+```
+
+```java
+// Concrete Context
+public class LuxuryVechile extends Vehicle
+{
+    public LuxuryVechile(Drive driveCapability)
+    {
+        super(driveCapability);
+    }
+    public void drive()
+    {
+        super.drive();
+    }
+}
+public class SportsVehicle extends Vehicle
+{
+    public SportsVehicle(Drive driveCapability)
+    {
+        super(driveCapability);
+    }
+    public void drive()
+    {
+        super.drive();
+    }
+}
+
+```
+
+```java
+// Concrete strategies
+
+public class NormalDrive implements Drive
+{
+    @Override
+    public void drive() {
+        System.out.println("normal dirve capability");
+    }
+}
+
+public class LuxuryDrive implements Drive
+{
+    @Override
+    public void drive() {
+        System.out.println("luxury drive capability");
+    }
+}
+```
+
+```java
+// client
+public class Main {
+    public static void main(String[] args) {
+       Vehicle mersedes = new LuxuryVechile(new LuxuryDrive());
+       mersedes.drive();
+
+       Vehicle audi = new SportsVehicle(new LuxuryDrive());
+       audi.drive();
+       Vehicle bmw=new LuxuryVechile(new NormalDrive());
+       bmw.drive();
+    }
+}
+```
+
+#### 6. Command Design Pattern
+The Command design pattern is a behavioral design pattern that aims to encapsulate a request as an object, thus allowing clients to parameterize and queue operations, as well as support undoable operations.
+
+Components:
+1. Command: This is the core interface that declares the execution method. It typically includes a single method, such as execute(), which encapsulates the action to be performed.
+2. Concrete Command: This class implements the Command interface and represents a specific command. It contains a reference to the receiver (the object that will perform the action) and implements the execute() method by invoking the corresponding operation on the receiver.
+3. Receiver: The Receiver class defines the object that will perform the actual action requested by the command. It contains the necessary logic and functionality to carry out the operation. This can also be defined as Executer 
+4. Controller: This class is responsible for controlling the commands. It receives the command object, usually through a setter method, and triggers the execution of the command when required.
+5. Invoker (Client) :The Invoker creates the command objects, sets their receivers (if necessary), and assigns them to the controller. It is responsible for initiating requests .
+
+Implementation:
+```java
+// Command Interface
+public interface Command
+{
+    public void execute();
+}
+```
+
+```java
+// Executor of commands (Receiver)
+public class Lights {
+    public Lights(){}
+    public void TurnOn()
+    {
+        System.out.println("turning on the lights");
+    }
+    public void TurnOff()
+    {
+        System.out.println("turning off the lights");
+    }
+}
+```
+
+```java
+// Concrete Commands
+public class TurnOnLights implements Command{
+    private Lights lights;
+    public TurnOnLights(Lights lights)
+    {
+        this.lights=lights;
+    }
+    @Override
+    public void execute(){
+        this.lights.TurnOn();
+    }
+}
+public class TurnOffLights implements Command{
+    private Lights lights;
+    public TurnOffLights(Lights lights)
+    {
+        this.lights=lights;
+    }
+    @Override
+    public void execute(){
+        this.lights.TurnOff();
+    }
+}
+```
+
+```java
+// Controller Class
+public class RemoteController {
+    Command command;
+    public RemoteController(){}
+    public void setCommand(Command command)
+    {
+        this.command = command;
+    }
+    public void pressButton()
+    {
+        this.command.execute();
+    }
+}
+```
+
+```java
+// Client
+public class Main {
+    public static void main(String[] args) {
+        Lights lights=new Lights(); //executor
+        RemoteController remote=new RemoteController(); //controller
+        Command c1=new TurnOnLights(lights);
+        Command c2=new TurnOffLights(lights);
+        remote.setCommand(c1);
+        remote.pressButton(); //invoking command
+        remote.setCommand(c2);
+        remote.pressButton();
+    }
+}
+```
+
+#### 7. State Design Pattern
+The State Pattern allows an object to change its behavior based on its current state. Instead of using large if-else or switch-case blocks to handle different states, the behavior is encapsulated into state classes. The context delegates behavior to the current state object.
+
+![State Design Pattern](./files/images/state.png)
+
+Components:
+1. State Interface: Defines the common behaviour for all states.
+2. Concrete States: Implement the behaviour for each state.
+3. Context: Maintains a reference to the current state and delegates requests to the current state object.
+
+Implementation:
+```java
+// State Interface
+interface TrafficLightState {
+    void handleRequest(TrafficLightContext context);
+}
+```
+```java
+// Concrete states
+class RedLightState implements TrafficLightState {
+    @Override
+    public void handleRequest(TrafficLightContext context) {
+        System.out.println("Red Light: Cars must stop.");
+        context.setState(new GreenLightState());  // Change to Green after Red
+    }
+}
+class GreenLightState implements TrafficLightState {
+    @Override
+    public void handleRequest(TrafficLightContext context) {
+        System.out.println("Green Light: Cars can go.");
+        context.setState(new YellowLightState());  // Change to Yellow after Green
+    }
+}
+```
+```java
+class TrafficLightContext {
+    private TrafficLightState currentState;
+
+    public TrafficLightContext() {
+        currentState = new RedLightState();  // Default initial state
+    }
+
+    public void setState(TrafficLightState state) {
+        this.currentState = state;
+    }
+
+    public void changeLight() {
+        currentState.handleRequest(this);
+    }
+}
+```
+```java
+// Client
+public class StatePatternDemo {
+    public static void main(String[] args) {
+        TrafficLightContext trafficLight = new TrafficLightContext();
+
+        for (int i = 0; i < 6; i++) {  // Change the light multiple times
+            trafficLight.changeLight();
+            System.out.println();
+        }
+    }
+}
+```
+
+#### 8. Visitor Design Pattern
+The Visitor Pattern is a behavioral design pattern that allows adding new operations to a class hierarchy without modifying existing code. It achieves this by separating an algorithm from the object structure it operates on.
+
+Implementation:
+```java
+// Visitor Interface
+interface ShoppingCartVisitor {
+    double visit(Book book);
+    double visit(Electronic electronic);
+}
+```
+
+```java
+// Concrete Visitor
+class DiscountCalculator implements ShoppingCartVisitor {
+    @Override
+    public double visit(Book book) {
+        double discount = book.getPrice() > 50 ? 10 : 5;
+        double finalPrice = book.getPrice() - discount;
+        System.out.println("Book: " + book.getTitle() + " final price: " + finalPrice);
+        return finalPrice;
+    }
+
+@Override
+    public double visit(Electronic electronic) {
+        double discount = electronic.getPrice() * 0.1;
+        double finalPrice = electronic.getPrice() - discount;
+        System.out.println("Electronic Item: " + electronic.getName() + " final price: " + finalPrice);
+        return finalPrice;
+    }
+}
+```
+
+```java
+// Element Interface
+interface Product {
+    double accept(ShoppingCartVisitor visitor);
+}
+```
+
+```java
+// Concrete Elements
+class Book implements Product {
+    private String title;
+    private double price;
+
+    public Book(String title, double price) {
+        this.title = title;
+        this.price = price;
+    }
+    public String getTitle() { return title; }
+    public double getPrice() { return price; }
+    @Override
+    public double accept(ShoppingCartVisitor visitor) {
+        return visitor.visit(this);
+    }
+}
+class Electronic implements Product {
+    private String name;
+    private double price;
+
+    public Electronic(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
+    public String getName() { return name; }
+    public double getPrice() { return price; }
+    @Override
+    public double accept(ShoppingCartVisitor visitor) {
+        return visitor.visit(this);
+    }
+}
+```
+
+```java
+// Object Structure
+class ShoppingCart {
+    private List<Product> products = new ArrayList<>();
+    public void addProduct(Product product) {
+        products.add(product);
+    }
+    public double calculateTotal(ShoppingCartVisitor visitor) {
+        double sum = 0;
+        for (Product product : products) {
+            sum += product.accept(visitor);
+        }
+        return sum;
+    }
+}
+```
+
+```java
+// Client
+public class VisitorPatternDemo {
+    public static void main(String[] args) {
+        ShoppingCart cart = new ShoppingCart();
+        cart.addProduct(new Book("Design Patterns", 60));
+        cart.addProduct(new Electronic("Laptop", 800));
+        cart.addProduct(new Book("Clean Code", 40));
+        
+        ShoppingCartVisitor discountCalculator = new DiscountCalculator();
+        double totalPrice = cart.calculateTotal(discountCalculator);
+        
+        System.out.println("Total Cart Price after Discount: " + totalPrice);
+    }
+}
+```
+
+#### 9. Interpreter Design Pattern
+The Interpreter Pattern is a behavioral design pattern used to define a grammar for a language and provide an interpreter to process sentences in that language. This pattern is useful when you need to interpret expressions in mathematical calculations, programming languages, or command-based systems.
+
+#### 10. Iterator Design Pattern
+The Iterator Pattern is a behavioral design pattern that provides a standard way to access elements of a collection sequentially without exposing its underlying structure. This pattern is widely used in traversing lists, trees, and other collections.
+
+Components:
+1. Iterator Interface: It provides methods to traverse through a collection. It includes:
+    * `hasNext()`: Ensures iteration stops when no elements are left.
+    * `next()`: Retrieves the next available element.
+
+```java
+interface Iterator<T> {
+    boolean hasNext();
+    T next();
+}
+```
+
+2. Concrete Iterator: It is responible for sequenctially traversing the collection. It maintains a position index to track the current element.
+
+```java
+class BookIterator implements Iterator<Book> {
+    private List<Book> books;
+    private int position = 0;
+
+    public BookIterator(List<Book> books) {
+        this.books = books;
+    }
+    @Override
+    public boolean hasNext() {
+        return position < books.size();
+    }
+    @Override
+    public Book next() {
+        return books.get(position++);
+    }
+}
+```
+
+3. Aggregate Interface: The aggregator interface specifies that a class implementing it should provide an iterator.
+
+```java
+interface BookCollection {
+    Iterator<Book> createIterator();
+}
+```
+
+4. Concrete Aggregate: It impements Aggregate Interface and hold a collection. It provides an iterator to traverse the books.
+
+```java
+class Library implements BookCollection {
+    private List<Book> books = new ArrayList<>();
+
+    public void addBook(Book book) {
+        books.add(book);
+    }
+    @Override
+    public Iterator<Book> createIterator() {
+        return new BookIterator(books);
+    }
+}
+```
+
+5. Client Code
+```java
+class Book {
+    private String title;
+
+    public Book(String title) {
+        this.title = title;
+    }
+    public String getTitle() {
+        return title;
+    }
+}
+public class IteratorPatternDemo {
+    public static void main(String[] args) {
+        Library library = new Library();
+        library.addBook(new Book("Design Patterns"));
+        library.addBook(new Book("Clean Code"));
+        library.addBook(new Book("Effective Java"));
+        
+        Iterator<Book> iterator = library.createIterator();
+        
+        System.out.println("Books in the library:");
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next().getTitle());
+        }
+    }
+}
+```
+
+#### 11. Memento Design Pattern
+The Memento Pattern is a behavioral design pattern that allows an object to restore its previous state without exposing its internal structure. This is particularly useful for implementing undo/redo functionalities in applications.
+
 
 #### Additional Resources
 * [Catelog of Design Patterns](https://refactoring.guru/design-patterns/catalog)
@@ -674,4 +1966,24 @@ Composite Design Pattern is a structural design pattern which is used when we ha
 
 * Structural Design Patterns
     * [Adapter](https://medium.com/@akshatsharma0610/adapter-design-pattern-in-java-fa20d6df25b8)
+    * [Composite](https://medium.com/@akshatsharma0610/composite-design-pattern-b1ebd0756aa9)
+    * [Proxy](https://medium.com/@kalanamalshan98/proxy-design-pattern-a-comprehensive-guide-73688bbd8e93)
+    * [Flyweight](https://medium.com/@thecodebean/flyweight-design-pattern-implementation-in-java-aefa07fde038)
+    * [Facade](https://medium.com/@akshatsharma0610/facade-design-pattern-in-java-777005efc75f)
+    * [Bridge](https://medium.com/@thecodebean/bridge-design-pattern-implementation-in-java-f71c853979fe)
+    * [Decorator](https://medium.com/@thecodebean/decorator-design-pattern-implementation-in-java-af632380e249)
+
+* Behavioural Design Patterns
+    * [Template Method](https://medium.com/@akshatsharma0610/template-design-pattern-in-java-453da50185a8)
+    * [Mediator](https://medium.com/@kalanamalshan98/mediator-pattern-in-java-755662d33c0f)
+    * [Chain of Responsibility](https://medium.com/@ngneha090/beginners-guide-to-chain-responsibility-design-pattern-in-java-e1e0ddac2cb6)
+    * [Observer](https://devcookies.medium.com/observer-design-pattern-a-complete-guide-with-examples-ec40648749ff)
+    * [Strategy](https://medium.com/@akshatsharma0610/strategy-design-pattern-in-java-6ee96f87d807)
+    * [Command](https://medium.com/@ngneha090/beginners-guide-to-command-design-pattern-java-2979e768478e)
+    * [State](https://medium.com/@ahmettemelkundupoglu/mastering-the-state-design-pattern-in-java-a-detailed-guide-with-examples-4544a975a914)
+    * [Visitor](https://medium.com/@kalanamalshan98/visitor-design-pattern-in-java-bd6eb6461514)
+    * [Interpreter](https://medium.com/@kalanamalshan98/interpreter-design-pattern-in-java-830047ea02bd)
+    * [Iterator](https://medium.com/@kalanamalshan98/iterator-design-pattern-in-java-e058d7285f33)
+    * [Memento](https://medium.com/@kalanamalshan98/memento-design-pattern-in-java-42246b9323d9)
+
 
