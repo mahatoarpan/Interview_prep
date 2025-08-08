@@ -1987,3 +1987,26 @@ The Memento Pattern is a behavioral design pattern that allows an object to rest
     * [Memento](https://medium.com/@kalanamalshan98/memento-design-pattern-in-java-42246b9323d9)
 
 
+## Architectural Principles
+Architectural principles refer to a set of guidelines or rules that are used to guide the design and development of a software architecture. These principles are intended to ensure that the resulting architecture is maintainable, scalable, and easy to understand and modify. Some common architectural principles include the separation of concerns, modularity, loose coupling, and high cohesion. Additionally, architectural principles are often used in conjunction with design patterns, which are reusable solutions to common software design problems.
+
+### Component Principles
+Component principles in software architecture refer to guidelines for designing and implementing software components that are modular, reusable, and easy to understand, test, and maintain. Some of the key component principles in software architecture include:
+
+* High cohesion
+* Low coupling
+* Separation of concerns
+* Interface-based design
+* Reusability
+* Testability
+* Modularity
+* Interoperability
+
+By following these component principles, software can be developed in a way that is easy to understand, maintain, and extend, and that is less prone to bugs. It also enables better code reuse, and makes it easier to test and change the code, and also enables better code reuse, as components can be reused in different contexts.
+
+
+
+
+#### Additional Resources:
+* [Intro to Architectural Principles](https://learn.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/architectural-principles)
+* [Component-Based Architecture](https://www.tutorialspoint.com/software_architecture_design/component_based_architecture.htm)
