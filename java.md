@@ -820,4 +820,164 @@ A HashSet and a TreeSet in Java are both implementation of the Set interface, bu
     * HashTable - Order of insertion is not guaranteed.
 
 ### What are the different ways of thread usage?
+We can define and implement a thread in java using two ways:
 
+1. Extending the Thread class
+```java
+public class ThreadExample extends Thread {
+    public void run() {
+        System.out.println("Thread runs...");
+    }
+
+    public static void main(String[] args) {
+        ThreadExample example = new ThreadExample();
+        example.start();
+    }
+} 
+```
+
+2. Implementing the Runnable interface
+```java
+public class ThreadExample implements Runnable {
+
+    public void run() {
+        System.out.println("Thread runs...");
+    }
+
+    public static void main(String[] args) {
+        ThreadExample example = new ThreadExample();
+        example.start();
+    }
+}
+```
+
+Implementing a thread using the method Runnable interface is more preferred and advantageous as Java does not have support for multiple inheritance of classes.
+
+Start() method isused for creating a seperate class stack foor the thread execution. Once the call stack is created, JVM calls the run() method for executing the thread in that call stack.
+
+### What are the different types of Thread Priorities in Java? And what is the default priority of a thread assigned by JVM?
+There are a total of 3 different types of priority available in Java. 
+* MIN_PRIORITY: It has an integer value assigned with 1.
+* MAX_PRIORITY: It has an integer value assigned with 10.
+* NORM_PRIORITY: It has an integer value assigned with 5.
+
+In Java, Thread with MAX_PRIORITY gets the first chance to execute. But the default priority for any thread is NORM_PRIORITY assigned by JVM. 
+
+### What is the difference between the ‘throw’ and ‘throws’ keyword in java?
+
+The ‘throw’ keyword is used to manually throw the exception to the calling method. And the ‘throws’ keyword is used in the function definition to inform the calling method that this method throws the exception. So, if you are calling, then you have to handle the exception.
+
+### What are the differences between constructor and method of a class in Java?
+Constructor
+* Constructor is used for initializing the object state.
+* Constructor has no return type.
+* Constructor gets invoked implicitly.
+* If the constructor is not defined, then a default constructor is provided by the java compiler.
+* The constructor’s name should be equal to the class name.
+* A constructor cannot be marked as final because whenever a class is inherited, the constructors are not inherited. Hence, making it final doesn’t make sense. Java throws compilation error saying – modifier final not allowed here.
+* Final variable instantiations are possible inside a constructor and the scope of this applies to the whole class and its objects.
+
+Method
+* Method is used for exposing the object’s behaviour.
+* Method should have a return type. Even if it does not return anything, return type is void.
+* Method must be invoked on the object explicitly.
+* If a method is not defined, then the compiler does not provide it.
+* The name of the method can have any name or have a class name too.
+* A method can be defined as final, but it cannot be overridden in its subclass.
+* A final variable if initialised inside a method ensures that the variable cant be changed only within the scope of the method.
+
+### Java works as “pass by value” or “pass by reference” phenomenon?
+Java always works as a “pass by value”. There is nothing called a “pass by reference” in Java. However, when the object is passed in any method, the address of the value is passed due to the nature of object handling in Java. When an object is passed, a copy of the reference is created by Java and that is passed to the method. The objects point to the same memory location. 
+
+### What is the ‘IS-A’ relationship in OOPs Java?
+‘IS-A’ relationship is another name for inheritance. When we inherit the base class from the derived class, then it forms a relationship between the classes. So that relationship is termed as ‘IS-A’ relationship.
+
+### How to not allow serialization of attributes of a class in Java?
+
+In Java, if you want to prevent certain attributes of a class from being serialized, the simplest and most common way is to mark them as transient. `transient` tells Java’s serialization mechanism to skip this field when serializing the object. When the object is deserialized, the transient field will have its default value:
+* null for objects
+* 0 for numbers
+* false for booleans
+
+```java
+import java.io.Serializable;
+
+public class User implements Serializable {
+    private String username;
+    private transient String password; // Will not be serialized
+
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    // getters and setters
+}
+
+```
+
+There are several reasons why you might want to mark a field as transient:
+1. Security - If a field contains sensitive information, you should mark it as transient to prevent it from being stored in a file or transmitted over a network.
+2. Performance - Serializing and deserializing large objects can be time-consuming. By marking fields as transient, you can reduce the amount of data that needs to be serialized and improve the performance of your program.
+3. State Management - Sometimes, the state of an object can be reconstructed based on other information. In these cases, you can mark the fields that represent this state as transient and avoid the overhead of serializing and deserializing them.
+
+### Is it mandatory for a catch block to be followed by a try block?
+No, it is not necessary for a catch block to be present after a try block. - A try block should be followed either by a catch block or by a finally block. If the exceptions likelihood is more, then they should be declared using the throws clause of the method.
+
+### Can we call a constructor of a class inside another constructor?
+Yes, in Java, you can call one constructor from another inside the same class using the special keyword `this(...)`.
+
+Rules:
+1. Only one `this()` call per constructor.
+2. Must be the first statement in the constructor.
+3. You can use it for code reuse and to avoid duplication.
+4. You cna also call the parent class constructor using` super()` - but not both `this()` and `super()` in the same constructor, because both must be the first statement.
+
+```java
+public class Person {
+    private String name;
+    private int age;
+
+    // Constructor 1
+    public Person(String name) {
+        this(name, 0); // Calls Constructor 2
+    }
+
+    // Constructor 2
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+}
+
+```
+
+
+### Contiguous memory locations are usually used for storing actual values in an array but not in ArrayList. Explain.
+
+In Java, a primitive array, like int[], stores its elements in a single block of contiguous memory. For primitives, these are the actual values; for objects, these are references stored contiguously. This is why arrays have a fixed size — the JVM reserves that continuous block at allocation time.
+
+An ArrayList, however, is a resizable data structure built on top of an internal Object[] array. That internal array stores object references in contiguous memory, but the actual objects those references point to can be located anywhere in the heap, not necessarily next to each other.
+
+So, in an array of primitives, the actual values are contiguous in memory. In an ArrayList, only the references are contiguous; the underlying objects are scattered in the heap. This design allows ArrayList to be dynamic, but adds an extra level of indirection compared to arrays.
+
+### How does the size of ArrayList grow dynamically? And state how it is implemented internally.
+
+An ArrayList in Java is backed by an internal array called elementData. When we add elements and the internal array becomes full, the ArrayList automatically grows by creating a new, larger array and copying the existing elements into it.
+
+The default growth strategy in the JDK is:
+
+```
+newCapacity = oldCapacity + (oldCapacity >> 1)
+```
+
+That is, it increases the size by 50% of the current capacity. For example, if the capacity is 10 and it’s full, it grows to 15.
+
+Internally, this resizing happens in the ensureCapacity() method, which is triggered when adding elements via add(). The actual array copying is done using Arrays.copyOf() — which allocates a new array in memory and copies all references from the old array.
+
+This dynamic resizing provides amortized O(1) time complexity for add(), but occasional resize operations are O(n) because of the copy.
+
+Extra:
+* Initial capacity is 10 by default (unless specified in the constructor).
+* Removing elements does not shrink the internal array automatically — trimToSize() must be called manually.
+* Because resizing requires copying, frequent expansions can be expensive, so it’s good to set an initial capacity if you know the expected size.
