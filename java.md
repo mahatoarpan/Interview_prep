@@ -981,3 +981,683 @@ Extra:
 * Initial capacity is 10 by default (unless specified in the constructor).
 * Removing elements does not shrink the internal array automatically — trimToSize() must be called manually.
 * Because resizing requires copying, frequent expansions can be expensive, so it’s good to set an initial capacity if you know the expected size.
+
+### Although inheritance is a popular OOPs concept, it is less advantageous than composition. Explain.
+
+Inheritance and Composition are both ways to achieve code reusability in Object-Oriented Programming (OOP). However, composition is generally preferred over inheritance in real-world design because inheritance introduces certain limitations.
+
+Why inheritance is less advantageous than composition:
+1. Tight Coupling:
+    * Inheritance creates a strong parent–child relationship.
+    * If the parent class changes, it may unintentionally break child classes.
+    * Composition allows replacing or changing components without affecting other classes.
+
+```java
+// Inheritance
+class Bird {
+    void fly() { System.out.println("Flying..."); }
+}
+class Penguin extends Bird {  // logically wrong
+    // Penguins cannot fly, but they inherit fly()
+}
+// Problem: Penguin is tightly coupled to Bird. If Bird has fly(), Penguin also gets it, even though it makes no sense.
+
+// Composition
+interface Movement {
+    void move();
+}
+class FlyMovement implements Movement {
+    public void move() { System.out.println("Flying..."); }
+}
+class WalkMovement implements Movement {
+    public void move() { System.out.println("Walking..."); }
+}
+class Penguin {
+    private Movement movement;
+
+    Penguin(Movement movement) {
+        this.movement = movement;
+    }
+    void performMove() {
+        movement.move();
+    }
+}
+// Now, Penguin can use WalkMovement, while other birds can use FlyMovement.
+```
+
+2. Lack of Flexibility:
+    * A subclass can inherit only from one superclass.
+    * Composition allows replacing or changing components without affecting other classes.
+
+```java
+// Inheritance
+class Phone {
+    void call() { System.out.println("Calling..."); }
+}
+class CameraPhone extends Phone {
+    void takePhoto() { System.out.println("Taking photo..."); }
+}
+// Problem: What if you want a MusicPhone that also has a camera? You can’t extend two classes in Java.
+
+// Composition
+class Camera {
+    void takePhoto() { System.out.println("Taking photo..."); }
+}
+class MusicPlayer {
+    void playMusic() { System.out.println("Playing music..."); }
+}
+class SmartPhone {
+    private Camera camera = new Camera();
+    private MusicPlayer musicPlayer = new MusicPlayer();
+
+    void useCamera() { camera.takePhoto(); }
+    void useMusic() { musicPlayer.playMusic(); }
+}
+// SmartPhone flexibly uses both Camera and MusicPlayer.
+```
+
+3. Fragile Base Class Problem:
+    * If you modify the base class, all subclasses are forced to adapt - even if they don't need the new behaviour.
+    * Composition avoids this issue because you can plug in only the required parts.
+
+```java
+// Inheritance
+class Account {
+    void withdraw(double amount) {
+        System.out.println("Withdrawing " + amount);
+    }
+}
+class SavingsAccount extends Account {
+    // Inherits withdraw()
+}
+// Later, when you modify the parent, all the child classes are affected even if the rule doesn't apply to them.
+
+// Composition
+class WithdrawPolicy {
+    void withdraw(double amount) {
+        System.out.println("Withdrawing " + amount);
+    }
+}
+class SavingsAccount {
+    private WithdrawPolicy policy = new WithdrawPolicy();
+
+    void withdraw(double amount) {
+        policy.withdraw(amount);
+    }
+}
+// Only classes that use this WithdrawPolicy are affected by changes.
+```
+
+4. Encapsulation is broken:
+    * In inheritance, the child has access to protected members of the parent. This can expose internal implementation details.
+    * In compostion, ibjets interact only through public interfaces, preserving encapsulation.
+
+```java
+// Inheritance
+class Engine {
+    protected int rpm;  // exposed
+
+    void start() { rpm = 1000; }
+}
+class SportsCar extends Engine {
+    void boost() { rpm = 8000; } // directly modifies rpm
+}
+// SportsCar can directly change rpm, breaking encapsulation.
+
+// Composition
+class Engine {
+    private int rpm;  // encapsulated
+
+    void start() { rpm = 1000; }
+    void boost() { rpm = 8000; }
+}
+class SportsCar {
+    private Engine engine = new Engine();
+
+    void startCar() { engine.start(); }
+    void boostCar() { engine.boost(); }
+}
+// SportsCar cannot mess with rpm directly. Encapsulation is preserved.
+```
+
+5. Code Reuse is safer with composition:
+    * With inheritance, you may inherit unwanted behavior.
+    * With composition, you reuse only the functionality you need by delegating work to composed objects.
+
+```java
+// Inheritance
+class Printer {
+    void printDocument() { System.out.println("Printing..."); }
+    void faxDocument() { System.out.println("Faxing..."); }
+}
+class InkjetPrinter extends Printer {
+    // inherits faxDocument() even though inkjet can’t fax
+}
+
+// Composition
+class Printer {
+    void printDocument() { System.out.println("Printing..."); }
+}
+class Fax {
+    void faxDocument() { System.out.println("Faxing..."); }
+}
+class LaserPrinter {
+    private Printer printer = new Printer();
+    private Fax fax = new Fax();
+
+    void print() { printer.printDocument(); }
+    void fax() { fax.faxDocument(); }
+}
+// Only classes that need fax capability get it. No unnecessary methods.
+```
+
+### What are Composition and Aggregation? State the difference.
+
+Composition is a "has-a" relationship where the child object cannot exist without the parent object. It represents strong ownership. If the parent is destroyed, the child is also destroyed.
+
+```java
+class Engine {
+    void start() { System.out.println("Engine starts..."); }
+}
+
+class Car {
+    private Engine engine; // Composition
+
+    Car() {
+        engine = new Engine();  // Car owns the Engine
+    }
+
+    void drive() {
+        engine.start();
+        System.out.println("Car is driving...");
+    }
+}
+
+```
+Here, Car and Engine → If Car is destroyed, its Engine also goes away.
+
+Aggregation is also a "has-a" relationship but the child object can exist independently of the parent. It represents a weaker association. If the parent is destroyed, the child can still live.
+
+```java
+class Student {
+    private String name;
+
+    Student(String name) {
+        this.name = name;
+    }
+
+    String getName() { return name; }
+}
+
+class School {
+    private List<Student> students; // Aggregation
+
+    School(List<Student> students) {
+        this.students = students;  // School uses students, but doesn’t own them
+    }
+
+    void showStudents() {
+        for(Student s : students) {
+            System.out.println(s.getName());
+        }
+    }
+}
+```
+School and Student → Students can exist even if the School is gone.
+
+Composition and Aggregation are both “has-a” relationships in OOP. Composition is a strong association where the child object’s lifecycle is dependent on the parent (e.g., Car–Engine). Aggregation is a weaker association where the child object can exist independently of the parent (e.g., School–Student).
+
+### Why is synchronization necessary? 
+
+1. Concurrency Issues: When multiple threads execute simultaneously and share resources (like variables, files, databases), they may interfere with each other. This leads to problems such as:
+    * Race Condition (two threads modifying the same variable at the same time)
+    * Data inconsistency (wrong results due to interleaved operations)
+    * Unexpected behavior (one thread reading half-updated data)
+
+2. Synchronization ensures:
+    * Mutual Exclusion - Only one thread accesses a critical section at a time.
+    * Consistency - Shared resources remain in a valid state.
+    * Thread Safety - Multiple threads can run safely without corrupting data.
+
+```java
+// Example Without Synchronization (Problem)
+class Counter {
+    private int count = 0;
+
+    public void increment() {
+        count++; // Not thread-safe
+    }
+    public int getCount() {
+        return count;
+    }
+}
+
+public class Test {
+    public static void main(String[] args) throws InterruptedException {
+        Counter counter = new Counter();
+
+        Thread t1 = new Thread(() -> {
+            for(int i=0; i<1000; i++) counter.increment();
+        });
+
+        Thread t2 = new Thread(() -> {
+            for(int i=0; i<1000; i++) counter.increment();
+        });
+
+        t1.start();
+        t2.start();
+        t1.join();
+        t2.join();
+
+        System.out.println("Final count: " + counter.getCount());
+    }
+}
+// Expected result: 2000
+// Actual result: Less than 2000 (because both threads update count at the same time).
+```
+
+```java
+// Example With Synchronization (Solution)
+class Counter {
+    private int count = 0;
+
+    public synchronized void increment() { // synchronized method
+        count++;
+    }
+
+    public int getCount() {
+        return count;
+    }
+}
+// Now, only one thread can access increment() at a time, ensuring correctness.
+```
+
+Synchronization is necessary in multithreading to avoid race conditions and ensure data consistency when multiple threads access shared resources. It guarantees that only one thread executes a critical section at a time, making the program thread-safe.
+
+### Can you explain the Java thread lifecycle?
+
+In Java, a thread goes through different states from creation to termination. The lifecycle is managed by the JVM and the Thread Scheduler.
+
+Thread Lifeclye:
+```
+NEW --> RUNNABLE --> RUNNING --> WAITING/TIMED_WAITING/BLOCKED --> RUNNABLE --> TERMINATED
+```
+
+1. NEW (Created State):
+    * A thread is created using the Thread class but not yet started.
+    * It stays here until  `start()` is called.
+
+```java
+Thread t = new Thread(() -> System.out.println("Thread running..."));
+// Thread is in NEW state here
+```
+
+2. RUNNABLE
+    * After calling `start()`, the thread enters the RUNNABLE pool.
+    * It's ready to run, but the CPU decides when to actually execute it.
+
+```java
+t.start();  // Thread moves from NEW → RUNNABLE
+```
+
+3. RUNNING
+    * When the thread scheduler picks the thread from RUNNABLE, it goes into RUNNING state.
+    * At any point, only one thread per CPU core can be RUNNING.
+
+```java
+public void run() {
+    System.out.println("Thread is running...");
+}
+```
+
+4. BLOCKED
+    * A thread is in BLOCKED state if it tries to access a resource that another thread has locked.
+    * It waits until the resource becomes available.
+
+```java
+synchronized(lock) {
+    // If another thread already holds lock, this thread is BLOCKED
+}
+```
+
+5. WAITING / TIMED_WAITING
+    * WAITING - Thread waits indefinitely until another thread notifies it using `notify()` / `notifyAll()`.
+    * TIMED_WAITING - Thread waits for a specified time.
+
+```java
+// WAITING
+synchronized(lock) {
+    lock.wait(); // Thread goes into WAITING until notified
+}
+
+// TIMED_WAITING
+Thread.sleep(2000); // Thread waits for 2 seconds
+```
+
+6. TERMINATED (Dead State)
+    * Once the `run()` method finishes execution, the thread enters the TERMINATED state.
+    * A terminated thread cannot be restarted.
+
+```java
+System.out.println("Thread finished.");
+// Thread is TERMINATED now
+```
+
+### How data is stored in HashMap.
+
+A HashMap in Java stores data as key–value pairs and uses hashing for fast lookups.
+
+STEP 1: Hashing the Key
+* When you insert a key-value pair, the key is passed through a hash function (`hashCode()`).
+*  This generates an integer hash code for the key.
+* Example: "John".hashCode() → 12345678
+
+STEP 2: Calculating the index
+* The hash code is converted into an array index where the entry will be stored.
+```
+index = hashCode % arraySize
+```
+* Example: If arraySize = 16 and hashCode = 12345678, then index is (12345678 % 16).
+
+STEP 3: Storing in the bucket
+* Each position in the internal array is called a bucket.
+* the  `(key, value)` pair is stored in the bucket at the calculated index.
+
+STEP 4: Handling Collisions
+* Two different keys may generate the same index (collision)
+* HashMap handles this using:
+    1. Linked List (Java 7 and earlier)
+    2. Balanced Tree (Red-Black Tree in Java 8+) if a bucket has too many entries (threshold > 8)
+* Example: If "John" and "Mike" both map to index 5, they are stored in a linked list/tree inside bucket 5.
+
+STEP 5: Resizing (Rehashing)
+* HashMap resizes when the number of entries exceeds (capacity * load factor)
+* Default capacity = 16
+* Default load factor = 0.75
+* Resizing = double array size and recalculating indexes for all keys.
+
+### What are the various access specifiers in Java?
+
+In Java, access specifiers are the keywords which are used to define the access scope of the method, class, or a variable. In Java, there are four access specifiers given below.
+* Public: The classes, methods, or variables which are defined as public, can be accessed by any class or method.
+* Protected: Protected can be accessed by the class of the same package, or by the sub-class of this class, or within the same class.
+* Default: Default are accessible within the package only. By default, all the classes, methods, and variables are of default scope.
+* Private: The private class, methods, or variables defined as private can be accessed within the class only.
+
+
+### What is this keyword in java?
+The `this` keyword is a reference variable that refers to the current object. There are the various uses of `this` keyword in Java. It can be used to refer to current class properties such as instance methods, variable, constructors, etc. It can also be passed as an argument into the methods or constructors. It can also be returned from the method as the current class instance.
+
+There are the following uses of this keyword.
+* this can be used to refer to the current class instance variable.
+* this can be used to invoke current class method (implicitly)
+* this() can be used to invoke the current class constructor.
+* this can be passed as an argument in the method call.
+* this can be passed as an argument in the constructor call.
+* this can be used to return the current class instance from the method.
+
+
+### What is the Inheritance?
+
+Inheritance is a mechanism by which one object acquires all the properties and behaviour of another object of another class. It is used for Code Reusability and Method Overriding. The idea behind inheritance in Java is that you can create new classes that are built upon existing classes. When you inherit from an existing class, you can reuse methods and fields of the parent class. Moreover, you can add new methods and fields in your current class also. Inheritance represents the IS-A relationship which is also known as a parent-child relationship.
+
+There are five types of inheritance in Java:
+1. Single Inheritance - A class inherits from one parent class.
+```java
+class Animal {
+    void eat() { System.out.println("Eating..."); }
+}
+class Dog extends Animal {
+    void bark() { System.out.println("Barking..."); }
+}
+```
+
+2. Multilevel Inheritance - A class is derived from another derived class. 
+```java
+class Animal {
+    void eat() { System.out.println("Eating..."); }
+}
+class Dog extends Animal {
+    void bark() { System.out.println("Barking..."); }
+}
+class BabyDog extends Dog {
+    void weep() { System.out.println("Weeping..."); }
+}
+```
+
+3. Multiple Inheritance (Not Supported with Classes in Java) - A class inherits from more than one parent. Java does not support multiple inheritance with classes (to avoid diamond problem). But Java supports it using interfaces.
+```java
+interface CanRun {
+    void run();
+}
+interface CanBark {
+    void bark();
+}
+class Dog implements CanRun, CanBark {
+    public void run() { System.out.println("Running..."); }
+    public void bark() { System.out.println("Barking..."); }
+}
+```
+
+4. Hierarchical Inheritance - Multiple child classes inherit from the same parent class.
+```java
+class Animal {
+    void eat() { System.out.println("Eating..."); }
+}
+class Dog extends Animal {
+    void bark() { System.out.println("Barking..."); }
+}
+class Cat extends Animal {
+    void meow() { System.out.println("Meowing..."); }
+}
+```
+
+
+### What is String Pool?
+The String Pool is a special memory region inside the heap where Java stores String literals. When you create a String using literals, Java checks the pool first. If the string already exists in the pool, the same reference is returned (no new object is created). If it does not exist, a new string is created and placed in the pool. This helps in memory optimization and improves performance since strings are immutable.
+
+```java
+public class Test {
+    public static void main(String[] args) {
+        String s1 = "Java";
+        String s2 = "Java";
+        String s3 = new String("Java"); // creates a separate object in heap memory (outside the pool).
+
+        System.out.println(s1 == s2); // true (both point to the same object in pool)
+        System.out.println(s1 == s3); // false (different objects)
+    }
+}
+```
+
+Using `intern()` method, you can force a string into the pool.
+```java
+public class Test {
+    public static void main(String[] args) {
+        String s1 = new String("Hello");
+        String s2 = s1.intern(); // puts "Hello" in pool
+        String s3 = "Hello";
+
+        System.out.println(s2 == s3); // true (both point to pool object)
+    }
+}
+
+```
+
+### What are wrapper classes?
+Wrapper classes are classes that allow primitive types to be accessed as objects. In other words, we can say that wrapper classes are built-in java classes which allow the conversion of objects to primitives and primitives to objects. The process of converting primitives to objects is called autoboxing, and the process of converting objects to primitives is called unboxing.
+
+Wrapper classes needed when working with Collections (like ArrayList, HashMap) because collections store only objects, not primitives.
+
+### What is lambda expression in Java and How does a lambda expression relate to a functional interface?
+A lambda expression in Java is an anonymous function that provides a concise way to write code. It can be used primarily to implement functional interfaces (interfaces with a single abstract method). The lambda expression provides the implementation of that method directly.
+
+```java
+@FunctionalInterface
+interface MyFunctionalInterface {
+    void display(String msg);
+}
+
+public class Test {
+    public static void main(String[] args) {
+        // Lambda implementing the display method
+        MyFunctionalInterface obj = (msg) -> System.out.println("Message: " + msg);
+        obj.display("Hello Lambda!");
+    }
+}
+
+```
+    
+### What are functional interfaces?
+A functional interface is an interface in Java that contains exactly one abstract method. Marked with the annotation `@FunctionalInterface` (not mandatory, but helps catch mistakes at compile time). They can have:
+* Only one abstrat method (mandatory).
+* Any number of default methods and static methods.
+```java
+@FunctionalInterface
+interface MyFunctionalInterface {
+    void sayHello(); // Single Abstract Method
+}
+
+```
+
+### Can a functional interface extend/inherit another interface?
+
+Yes, a functional interface can extend another interface. However, after inheritance, the resulting interface must still contain exactly one abstract method.
+* If it inherits a single abstract method and does not add new ones → it remains a functional interface.
+* If multiple abstract methods exist (either defined or inherited), it will no longer be a functional interface.
+
+### What is the Java Stream API? Why was it introduced in Java 8?
+The Stream API (introduced in Java 8) is a powerful abstraction for processing collections of data (like List, Set, Map, arrays, etc.) in a functional style.
+
+It allows you to perform bulk operations such as filtering, mapping, reducing, grouping, and sorting in a declarative and readable way, instead of writing verbose loops. Think of a stream as a pipeline of data that flows through various operations.
+
+Stream API was introduced to:
+1. Simplify Collection Processing - Instead of writing nested loops, you can express operations in a clean and concise way.
+```java
+// Old way (Java 7 and before)
+List<String> names = Arrays.asList("Alen", "John", "Alice", "Bob");
+List<String> result = new ArrayList<>();
+for (String name : names) {
+    if (name.startsWith("A")) {
+        result.add(name.toUpperCase());
+    }
+}
+System.out.println(result);
+
+// Java 8 Stream way
+List<String> result2 = names.stream()
+        .filter(name -> name.startsWith("A"))
+        .map(String::toUpperCase)
+        .toList();
+System.out.println(result2);
+```
+
+2. Support functional programming - Streams use lambda expressions and method references.
+
+3. Enable Parallel Processing (Easy Multi-threading) - With just one method call (`parallelStream()`), developers can utilize multi-core CPUs for faster processing.
+```java
+int sum = numbers.parallelStream()
+                 .mapToInt(Integer::intValue)
+                 .sum();
+
+```
+
+4. Lazy evaluation for performance - Stream operations are lazy. Intermediate operations (map, filter) are not execulted until a terminal operation (collect, forEach) is called. This helps optimize performance.
+
+### Can a stream be reused? Why or why not?
+No, a strean ub Hava cabbit ve reysed ibce a terminal operation has been executed. After you perform a terminal operation (like collect(), forEach(), reduce()), the stream is considered consumed and closed. If you try to use it again, Java will throw an `IllegalStateException`.
+
+Streams cannot be reused because:
+1. Streams represent a pipeline of data - Once data has flowed through the pipeline and reached a terminal operation, the pipeline is finished.
+2. Design choice for immutability & safety - Streams are designed to be used in a functional style (no side-effects, no mutable state). Allowing reuse could cause unpredictable behavior, especially in parallel streams.
+3. Efficiency - By making streams one-time-use, Java avoids keeping extra state information that would be required to “reset” them.
+
+
+### What is the difference between map() and flatMap()? Give examples.
+
+
+
+### How does filter() work in streams? Give an example.
+It is used to select elements from the stream based on a condition (given as a `Predicate`). It returns a new stream containing only elements that satisfy the condition. It is an intermediate operation (executes only when a terminal operation like forEach() pr collect() is called).
+```java
+public class FilterExample {
+    public static void main(String[] args) {
+        List<Integer> numbers = Arrays.asList(10, 15, 20, 25, 30);
+
+        numbers.stream()
+               .filter(n -> n % 2 == 0)   // keep only even numbers
+               .forEach(System.out::println);
+    }
+}
+```
+
+
+### What is the difference between findFirst(), findAny() and collect() in streams?
+
+1. `findFirst()`: Returns the first element of the stream (wrapped in an `Optional<T>`). It always gives the first element in ordered streams (like List or Stream.of()). In parallel streams, it still respects order.
+```java
+import java.util.*;
+
+public class FindFirstExample {
+    public static void main(String[] args) {
+        List<String> names = Arrays.asList("Alex", "John", "Alice", "Bob");
+
+        Optional<String> first = names.stream()
+                                      .filter(name -> name.startsWith("A"))
+                                      .findFirst();
+
+        System.out.println(first.orElse("No match found"));
+    }
+}
+// output: Alex
+```
+
+2. `findAny()`: Returns any element from the stream (wrapped in `Optional<T>`). Ub sequential streams, it usually behaves like findFirst(). In parallel streams, it may return any element for performance reasons (non-deterministic).
+```java
+import java.util.*;
+
+public class FindAnyExample {
+    public static void main(String[] args) {
+        List<String> names = Arrays.asList("Alex", "John", "Alice", "Bob");
+
+        Optional<String> any = names.parallelStream()
+                                    .filter(name -> name.startsWith("A"))
+                                    .findAny();
+
+        System.out.println(any.orElse("No match found"));
+    }
+}
+// Output: Alex or Alice - (depending on parallel execution)
+```
+
+3. `collect()`: Used to transform the elements of the stream into a different form, usually a collection like List, Set or Map.
+```java
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class CollectExample {
+    public static void main(String[] args) {
+        List<String> names = Arrays.asList("Alex", "John", "Alice", "Bob");
+
+        List<String> filteredNames = names.stream()
+                                          .filter(name -> name.length() > 3)
+                                          .collect(Collectors.toList());
+
+        System.out.println(filteredNames);
+    }
+}
+// output: ["Alex", "John", "Alice"]
+```
+
+### How do you sort a list using Stream API?
+
+### What is reduce() in streams? Can you give an example of its use?
+
+### Explain short-circuiting operations in streams. Can you give some examples?
+
+### What is the role of Collectors.toMap()? How do you handle duplicate keys?
+
+### What are parallel streams? How are they different from sequential streams?
+
+### How does distinct() work internally in streams?
+
+### What is lazy evaluation in streams? Can you explain with an example?
