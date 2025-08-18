@@ -1649,15 +1649,205 @@ public class CollectExample {
 ```
 
 ### How do you sort a list using Stream API?
+The sorted() method of Stream is used for sorting. It can be used in two ways:
+
+1. Natural Ordering (using Comparable) - If the elements implement Comparable, you can directly use sorted() method.
+
+```java
+public class NaturalSortExample {
+    public static void main(String[] args) {
+        List<String> names = Arrays.asList("John", "Alex", "Bob", "Alice");
+
+        List<String> sortedNames = names.stream()
+                                        .sorted() // natural order (A → Z)
+                                        .collect(Collectors.toList());
+
+        System.out.println(sortedNames);
+    }
+}
+
+```
+
+2. Custom Ordering (using Comparator) - You can pass a Comparator to sorted()
+
+```java
+public class CustomSortExample {
+    public static void main(String[] args) {
+        List<String> names = Arrays.asList("John", "Alex", "Bob", "Alice");
+
+        List<String> sortedByLength = names.stream()
+                                           .sorted(Comparator.comparingInt(String::length))
+                                           .collect(Collectors.toList());
+
+        System.out.println(sortedByLength);
+    }
+}
+```
 
 ### What is reduce() in streams? Can you give an example of its use?
+The reduc() method is used to reduce a stream of elements into a single value by repeatedly applying a binary operation. It's often used for sum, min, max, concatenation, multiplication, etc.
+
+There are 3 variants of reduce() in Stream:
+1. `Optional<T> reduce(BinaryOperator<T> accumulator)` - No identity value is provided. Returns an Optional, because the stream might be empty.
+```java
+public class ReduceType1 {
+    public static void main(String[] args) {
+        List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
+
+        Optional<Integer> sum = numbers.stream()
+                                       .reduce((a, b) -> a + b);
+
+        System.out.println("Sum: " + sum.get());  // 15
+    }
+}
+```
+2. `T reduce(T identity, BinaryOperator<T> accumulator)` - An identity (initial value) is given. Always returns a result, never Optional
+```java
+public class ReduceType2 {
+    public static void main(String[] args) {
+        List<Integer> numbers = Arrays.asList(1, 2, 3, 4);
+
+        int product = numbers.stream()
+                             .reduce(1, (a, b) -> a * b);
+
+        System.out.println("Product: " + product);  // 24
+    }
+}
+```
+3. `<U> U reduce(U identity, BiFunction<U,? super T,U> accumulator, BinaryOperator<U> combiner)` - Used in parallel streams. Allows different result type(U) than the stream element type (T). `combiner` mergers partial results from parallel executions.
+```java
+public class ReduceType3 {
+    public static void main(String[] args) {
+        List<String> words = Arrays.asList("Java", "Stream", "API");
+
+        int totalLength = words.parallelStream()
+                               .reduce(0, 
+                                       (len, word) -> len + word.length(), // accumulator
+                                       (len1, len2) -> len1 + len2);      // combiner
+
+        System.out.println("Total Length: " + totalLength);  // 13
+    }
+}
+```
+
 
 ### Explain short-circuiting operations in streams. Can you give some examples?
 
+Short-circuiting operations are intermediate or terminal operations that can produce a result without processing all elements of the stream. They help improve performance by avoiding unnecessary computation.
+
+1. Intermediate Short-Circuiting Operations - These prevent the need to traverse the full stream.
+    * limit(n) → restricts the stream to n elements.
+    * skip(n) → skips the first n elements and processes the rest.
+
+```java
+public class ShortCircuitExample1 {
+    public static void main(String[] args) {
+        List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6);
+
+        numbers.stream()
+               .limit(3) // only first 3 numbers
+               .forEach(System.out::println);
+    }
+}
+```
+
+2. Terminal Short-Circuiting Operations - These don’t process the full stream if the answer is found early.
+    * anyMatch() → returns true if any element matches, stops immediately.
+    * allMatch() → returns false immediately if any element doesn’t match.
+    * noneMatch() → returns false immediately if any element matches.
+    * findFirst() → returns the first element found.
+    * findAny() → returns any element (especially useful in parallel streams).
+
+```java
+public class ShortCircuitExample2 {
+    public static void main(String[] args) {
+        List<String> names = Arrays.asList("Arpan", "Rahul", "Amit", "Anu");
+
+        boolean result = names.stream()
+                              .anyMatch(name -> name.startsWith("R"));
+
+        System.out.println(result); // true (stops after "Rahul")
+    }
+}
+```
+
 ### What is the role of Collectors.toMap()? How do you handle duplicate keys?
+The Collectors.toMap() method is a collector that collects elements of a stream into a Map.
+It requires:
+
+1. Key Mapper Function → to extract keys.
+2. Value Mapper Function → to extract values.
+3. (Optional) Merge Function → to resolve duplicate keys.
+4. (Optional) Map Supplier → to specify the map implementation (e.g., HashMap, TreeMap, LinkedHashMap).
+
+```java
+public class ToMapExample {
+    public static void main(String[] args) {
+        List<String> names = Arrays.asList("Arpan", "Rahul", "Amit");
+
+        Map<String, Integer> nameLengthMap = names.stream()
+                .collect(Collectors.toMap(
+                        name -> name,          // Key: name itself
+                        name -> name.length()  // Value: length of name
+                ));
+
+        System.out.println(nameLengthMap);
+    }
+}
+```
+
+If two elements map to the same key, Collectors.toMap() will throw an IllegalStateException unless you provide a merge function.
+
+```java
+List<String> names = Arrays.asList("Arpan", "Rahul", "Amit", "Rahul");
+
+Map<String, Integer> map = names.stream()
+        .collect(Collectors.toMap(
+                name -> name,
+                name -> name.length(),
+                (oldVal, newVal) -> oldVal // keep the first one - MERGE FUNCTION
+        ));
+
+System.out.println(map);
+
+```
+
+If you want a specific map type (like LinkedHashMap to preserve order):
+```java
+Map<String, Integer> map = names.stream()
+        .collect(Collectors.toMap(
+                name -> name,
+                String::length,
+                (a, b) -> a,
+                LinkedHashMap::new
+        ));
+
+System.out.println(map.getClass()); // class java.util.LinkedHashMap
+
+```
 
 ### What are parallel streams? How are they different from sequential streams?
 
-### How does distinct() work internally in streams?
+A parallel stream is a stream that splits its elements into multiple parts, and processes them concurrently on multiple threads (using the ForkJoinPool framework under the hood). In contrast, a sequential stream processes elements one by one in a single thread.
+
+Use when:
+1. You have large data (e.g., millions of records).
+2. The task is CPU-intensive (not IO-heavy).
+3. Each operation is independent (no shared mutable state).
+
+Avoid when:
+1. Working with small datasets (thread overhead > benefits).
+2. When order matters strictly.
+3. When using IO-bound tasks (disk/network waits can block threads).
+
+Note - Parallel streams are not always faster. They’re beneficial only when the dataset is large, the operations are CPU-bound, and thread-safety/order aren’t issues.
 
 ### What is lazy evaluation in streams? Can you explain with an example?
+In Java Streams, lazy evaluation means that intermediate operations (like map(), filter(), distinct(), etc.) are not executed immediately when you call them. Instead, they are just stored as a pipeline of operations. The actual computation happens only when a terminal operation (like forEach(), collect(), reduce(), etc.) is invoked.
+
+This design allows the stream to:
+1. Avoid unnecessary work
+2. Process elements efficiently (sometimes even stop early with short-circuiting)
+3. Enable optimizations like fusion (combining multiple steps into one pass).
+
+
