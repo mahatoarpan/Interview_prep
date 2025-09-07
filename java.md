@@ -1564,7 +1564,7 @@ int sum = numbers.parallelStream()
 4. Lazy evaluation for performance - Stream operations are lazy. Intermediate operations (map, filter) are not execulted until a terminal operation (collect, forEach) is called. This helps optimize performance.
 
 ### Can a stream be reused? Why or why not?
-No, a strean ub Hava cabbit ve reysed ibce a terminal operation has been executed. After you perform a terminal operation (like collect(), forEach(), reduce()), the stream is considered consumed and closed. If you try to use it again, Java will throw an `IllegalStateException`.
+No, a stream cannot be reused if a terminal operation has been executed. After you perform a terminal operation (like collect(), forEach(), reduce()), the stream is considered consumed and closed. If you try to use it again, Java will throw an `IllegalStateException`.
 
 Streams cannot be reused because:
 1. Streams represent a pipeline of data - Once data has flowed through the pipeline and reached a terminal operation, the pipeline is finished.
