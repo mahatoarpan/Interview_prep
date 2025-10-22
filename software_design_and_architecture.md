@@ -136,9 +136,9 @@ SOLID programming design is a philosophy and approach to creating more robust, f
 SOLID is a popular set of design principles that developers use when creating object-oriented software. SOLID is an acronym that stands for five key design principles:
 
 * **S**ingle responsibility principle - "A class should have one, and only one, reason to change."
-* **O**pen-closed principle - “You should be able to extend a class’s behavior without modifying it.”
-* **L**iskov substitution principle - "To build software systems from interchangeable parts, those parts must adhere to a contract that allows those parts to be substituted one for another.”
-* **I**nterface segregation principle - "Make fine grained interfaces that are client-specific. Clients should not be forced to implement interfaces they do not use."
+* **O**pen-closed principle - “A class should be open for extension but close for modification.”
+* **L**iskov substitution principle - "Subclasses should be substituted for their Base classes.”
+* **I**nterface segregation principle - "Many client specific interfaces are better than one general purpose interface. Client should not be forced to implement methods they don't need."
 * **D**ependency inversion principle - "High level modules should not depend upon low level modules. Both should depend on abstractions…abstractions should not depend on details. Details should depend upon abstractions."
 
 ### DRY
@@ -167,7 +167,7 @@ Design patterns are general solutions to common problems that arise in software 
 There are several different types of design patterns, including:
 
 * Creational patterns
-* Structural patterns
+* Structural patterns 
 * Behavioral patterns
 * Architectural patterns
 
@@ -181,7 +181,7 @@ All implementation of Singleton have two steps in common:
 1. Make the default constructor private, to prevent other objects from using the new operator with the Singleton class.
 2. Create a static creation method that acts as a constructor. Under the hood, this method calls the private constructor to create an object and saves it in a static field. All following calls to this method return the cached object.
 
-![Singleton Pattern](./files/images/singleton.png)
+![Singleton Pattern](./files/images/design_patterns/singleton_pattern.png)
 The Singleton class declares the static method `getInstance` that returns the same instance of its own class.
 
 The Singleton’s constructor should be hidden from the client code. Calling the `getInstance` method should be the only way of getting the Singleton object.
@@ -290,7 +290,7 @@ public class BillPughSingleton {
 #### 2. Factory
 The factory design pattern is used when we have a superclass with multiple sub-classes and based on input, we need to return one of the sub-class. This pattern takes out the responsibility of the instantiation of a class from the client program to the factory class.
 
-![Factory Pattern](./files/images/factory.png)
+![Factory Pattern](./files/images/design_patterns/factory_pattern.png)
 
 1. Computer (Super Class) - Super class in factory design pattern can be an interface, abstract class or a normal java class.
 2. PC (Subclass 1), Server(Subclass 2)
@@ -351,79 +351,7 @@ public class ComputerFactory {
 #### 3. Abstract Factory
 In the Abstract Factory pattern, we get rid of if-else block and have a factory class for each sub-class. Then an Abstract Factory class that will return the sub-class based on the input factory class. 
 
-```java
-// SuperClass
-public abstract class Computer {
-     
-    public abstract String getRAM();
-    public abstract String getHDD();
-    public abstract String getCPU();
-}
-
-// subclass 1
-public class PC extends Computer {
- 
-    private String ram;
-    private String hdd;
-    private String cpu;
-     
-    public PC(String ram, String hdd, String cpu){
-        this.ram=ram;
-        this.hdd=hdd;
-        this.cpu=cpu;
-    }
-}
-
-// subclass 2
-public class Server extends Computer {
- 
-    private String ram;
-    private String hdd;
-    private String cpu;
-     
-    public Server(String ram, String hdd, String cpu){
-        this.ram=ram;
-        this.hdd=hdd;
-        this.cpu=cpu;
-    }
-}
-
-// abstract factory interface
-public interface ComputerAbstractFactory {
-
-	public Computer createComputer();
-
-}
-
-// factory class for subclass 1
-public class PCFactory implements ComputerAbstractFactory {
-
-	private String ram;
-	private String hdd;
-	private String cpu;
-	
-	public PCFactory(String ram, String hdd, String cpu){
-		this.ram=ram;
-		this.hdd=hdd;
-		this.cpu=cpu;
-	}
-}
-
-// factory class for subclass 2
-public class ServerFactory implements ComputerAbstractFactory {
-
-	private String ram;
-	private String hdd;
-	private String cpu;
-	
-	public ServerFactory(String ram, String hdd, String cpu){
-		this.ram=ram;
-		this.hdd=hdd;
-		this.cpu=cpu;
-	}
-}
-
-```
+![alt text](./files/images/design_patterns/abstract_factory_pattern.png)
 
 ```java
 // Product interface
@@ -589,9 +517,11 @@ These patterns help in organizing classes and objects into larger structures, ma
 #### 1. Adapter
 Adapter design pattern is one of the structural design pattern and it is used so that two unrelated interfaces can work together. It is often used to make existing classes work with others without modifying their source code. The pattern involves creating an adapter class that bridges the gap between the interfaces, allowing them to communicate effectively.
 
+![alt text](./files/images/design_patterns/adapter_pattern.png)
+
 Implementation of Adapter Design Pattern:
 
-Suppose you are having an IPhone6s and your friend is having an IPhone4s now you went to your friend’s house but you forgot to carry your charger with you and you need to charge your phone and the charger you need is not available . Now what will you do‍🤷‍♀️? So here in this situation an adapter is going to help us . You will use an adapter to charge your IPhone6s from IPhone4s charger . So here you have not changed the IPhone4s charger to IPhone6s charger you just adapted the situation and have your work done 
+Suppose you are having an IPhone6s and your friend is having an IPhone4s now you went to your friend’s house but you forgot to carry your charger with you and you need to charge your phone and the charger you need is not available . Now what will you do? So here in this situation an adapter is going to help us . You will use an adapter to charge your IPhone6s from IPhone4s charger . So here you have not changed the IPhone4s charger to IPhone6s charger you just adapted the situation and have your work done 
 
 *Step 1: Define the Target interface - This interface should specify the operations that the client code expects* 
 
@@ -602,7 +532,7 @@ public interface IPhone
 }
 ```
 
-*Step 2: Implement the Adaptee Class - This class represents the existing component with an incompatible interface. *
+*Step 2: Implement the Adaptee Class - This class represents the existing component with an incompatible interface.*
 
 ```java
 public interface Charger
@@ -665,7 +595,9 @@ public class IPhone6s implements IPhone
 #### 2. Composite Pattern
 Composite Design Pattern is a structural design pattern which is used when we have to represent a part-whole hierarchy. The composite pattern is meant to allow treating individual objects and compositions of objects, or “composites” in the same way.
 
- Composite Pattern consists of following objects.
+![alt text](./files/images/design_patterns/composite_pattern.png)
+
+Composite Pattern consists of following objects.
 
 * Base Component - is the base interface for all the objects in the composition. It should be either an interface or an abstract class with the common methods to manage the child composites.
 * Leaf - implements the default behavior of the base component. It doesn’t contain a reference to the other objects.
@@ -898,6 +830,7 @@ public class Game {
 
 #### 5. Facade Pattern
 The Facade Design Pattern is a structural pattern that provides a simplified interface to a set of interfaces in a subsystem, making it easier to use. It involves creating a unified interface that sits on top of a set of interfaces to simplify the usage for clients.
+![alt text](./files/images/design_patterns/facade_pattern.png)
 
 Implementation:
 ```java
@@ -1035,6 +968,8 @@ class Square extends Shape {
 #### 7. Decorator Pattern
 The Decorator pattern is a structural design pattern that allows you to enhance or modify the behavior of objects at runtime. It achieves this by creating a set of decorator classes that are used to wrap concrete components. Each decorator adds a specific feature or behavior to the component, and you can stack multiple decorators to create various combinations.
 
+![alt text](./files/images/design_patterns/decorator_pattern.png)
+
 Implementation:
 
 ```java
@@ -1130,7 +1065,7 @@ They describe how objects communicate and interact with each other to accomplish
 #### 1. Template Method Pattern
 The Template Design Pattern is a behavioral design pattern that defines the basic structure of an algorithm in a superclass, while allowing subclasses to provide specific implementations of certain steps of the algorithm without modifying its overall structure. It promotes code reuse and enforces a common algorithm structure across multiple subclasses.
 
-![Template](./files/images/template_method.png)
+![alt text](./files/images/design_patterns/template_pattern.png)
 
 Implementation:
 
@@ -1406,6 +1341,9 @@ public class Main {
 #### 4. Observer Pattern
 The Observer design pattern is a behavioral design pattern that establishes a one-to-many relationship between objects, allowing them to communicate and respond to changes in the state of a subject object .  This allows an object (known as the subject) to notify other objects (known as observers) when there is a change in its state. The Observer pattern is widely used in event-driven programming, GUIs, and even in messaging systems like Kafka.
 
+![alt text](./files/images/design_patterns/observer_pattern.png)
+
+
 Main Components:
 1. Subject: The object that holds the state and notifies the observers.
 2. Observer: Objects that listen for state changes in the subject.
@@ -1500,6 +1438,8 @@ public class ObserverPatternDemo {
 #### 5. Strategy Design Pattern
 Strategy pattern is used when we have multiple algorithm for a specific task and client decides the actual implementation to be used at runtime. It is based on the idea of encapsulating a family of algorithms into separate classes that implement a common interface.
 
+![alt text](./files/images/design_patterns/strategy_pattern.png)
+
 Main Components:
 1. Context: It is the class that encapsulates the data and defines the interface for accessing the algorithm.
 2. Strategy: It is an interface or abstract class that defines the common interface for all the algorithms.
@@ -1524,55 +1464,37 @@ public class Vehicle
 
 ```java
 // Statergy Interface
-public interface Drive
-{
-    public void drive();
+interface PaymentStrategy {
+    void pay(int amount);
 }
-```
-
-```java
-// Concrete Context
-public class LuxuryVechile extends Vehicle
-{
-    public LuxuryVechile(Drive driveCapability)
-    {
-        super(driveCapability);
-    }
-    public void drive()
-    {
-        super.drive();
-    }
-}
-public class SportsVehicle extends Vehicle
-{
-    public SportsVehicle(Drive driveCapability)
-    {
-        super(driveCapability);
-    }
-    public void drive()
-    {
-        super.drive();
-    }
-}
-
 ```
 
 ```java
 // Concrete strategies
-
-public class NormalDrive implements Drive
-{
-    @Override
-    public void drive() {
-        System.out.println("normal dirve capability");
+class CreditCardPayment implements PaymentStrategy {
+    public void pay(int amount) {
+        System.out.println("Paid ₹" + amount + " using Credit Card.");
     }
 }
 
-public class LuxuryDrive implements Drive
-{
-    @Override
-    public void drive() {
-        System.out.println("luxury drive capability");
+class UpiPayment implements PaymentStrategy {
+    public void pay(int amount) {
+        System.out.println("Paid ₹" + amount + " using UPI.");
+    }
+}
+```
+
+```java
+// Context
+class ShoppingCart {
+    private PaymentStrategy paymentStrategy;
+
+    public void setPaymentStrategy(PaymentStrategy paymentStrategy) {
+        this.paymentStrategy = paymentStrategy;
+    }
+
+    public void checkout(int amount) {
+        paymentStrategy.pay(amount);
     }
 }
 ```
@@ -1581,19 +1503,21 @@ public class LuxuryDrive implements Drive
 // client
 public class Main {
     public static void main(String[] args) {
-       Vehicle mersedes = new LuxuryVechile(new LuxuryDrive());
-       mersedes.drive();
+        ShoppingCart cart = new ShoppingCart();
 
-       Vehicle audi = new SportsVehicle(new LuxuryDrive());
-       audi.drive();
-       Vehicle bmw=new LuxuryVechile(new NormalDrive());
-       bmw.drive();
+        cart.setPaymentStrategy(new CreditCardPayment());
+        cart.checkout(2500);
+
+        cart.setPaymentStrategy(new UpiPayment());
+        cart.checkout(800);
     }
 }
 ```
 
 #### 6. Command Design Pattern
 The Command design pattern is a behavioral design pattern that aims to encapsulate a request as an object, thus allowing clients to parameterize and queue operations, as well as support undoable operations.
+
+![alt text](./files/images/design_patterns/command_pattern.png)
 
 Components:
 1. Command: This is the core interface that declares the execution method. It typically includes a single method, such as execute(), which encapsulates the action to be performed.
