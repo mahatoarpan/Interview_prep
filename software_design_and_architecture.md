@@ -703,6 +703,8 @@ The Composite Design Pattern is a powerful pattern for creating tree-like struct
 #### 3. Proxy Pattern
 The Proxy Design Pattern is a structural design pattern that provides an intermediary for accessing a real object. The proxy object controls the access to the real object, adding an additional layer of functionality, such as logging, caching, or access control.
 
+![alt text](./files/images/design_patterns/proxy_pattern.png)
+
 Key Components:
 1. Subject Interface - Defines the common interface for the proxy and real object.
 2. Real Subject - The actual obejct that perfome the teal operation. Implements the subject interface.
