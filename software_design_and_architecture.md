@@ -413,7 +413,7 @@ Builder pattern was introduced to solve some of the problems with Factory and Ab
 
 Builder pattern solves the issue with large number of optional parameters and inconsistent state by providing a way to build the object step-by-step and provide a method that will actually return the final Object.
 
-![Builder Pattern](./files/images/builder.png)
+![Builder Pattern](./files/images/design_patterns/builder_pattern.png)
 
 Implementation of builder pattern:
 
@@ -509,6 +509,56 @@ public class Client {
 Prototype design pattern is used when the Object creation is a costly affair and requires a lot of time and resources and you have a similar object already existing. Prototype pattern provides a mechanism to copy the original object to a new object and then modify it according to our needs. Prototype design pattern uses java cloning to copy the object.
 
 Prototype design pattern mandates that the Object which you are copying should provide the copying feature. It should not be done by any other class. However whether to use shallow or deep copy of the Object properties depends on the requirements and its a design decision.
+
+![alt text](./files/images/design_patterns/prototype_pattern.png)
+
+```java
+// Step 1: Prototype Interface
+interface Prototype extends Cloneable {
+    Prototype clone();
+}
+
+// Step 2: Concrete Prototype
+class EmployeeRecord implements Prototype {
+    private int id;
+    private String name;
+    private String department;
+
+    public EmployeeRecord(int id, String name, String department) {
+        this.id = id;
+        this.name = name;
+        this.department = department;
+    }
+
+    public EmployeeRecord(EmployeeRecord other) {
+        this.id = other.id;
+        this.name = other.name;
+        this.department = other.department;
+    }
+
+    @Override
+    public Prototype clone() {
+        return new EmployeeRecord(this);
+    }
+
+    public void showRecord() {
+        System.out.println(id + " " + name + " " + department);
+    }
+}
+
+// Step 3: Client
+public class PrototypePatternDemo {
+    public static void main(String[] args) {
+        EmployeeRecord e1 = new EmployeeRecord(101, "Arpan", "IT");
+        e1.showRecord();
+
+        // Clone the object instead of creating a new one
+        EmployeeRecord e2 = (EmployeeRecord) e1.clone();
+        e2.showRecord();
+    }
+}
+
+```
 
 
 ### Structural Design Patterns
@@ -775,6 +825,8 @@ public class Main {
 #### 4. Flyweight Pattern
 The Flyweight pattern is a structural design pattern that minimizes memory usage by sharing common objects as much as possible. It is particularly useful in scenarios where a large number of similar objects need to be created and managed. The pattern achieves this by separating an object’s intrinsic state (shared among multiple objects) from its extrinsic state (unique to each object).
 
+![alt text](./files/images/design_patterns/flyweight_pattern.png)
+
 Components:
 1. Flyweight Interface - This defines the interface for concrete flyweights. Typically, it includes a method to accept and process the extrinsic state.
 2. Concrete Flyweight - These are the actual flyweight objects that implement the Flyweight interface. They store intrinsic states that can be shared among multiple objects.
@@ -898,6 +950,8 @@ public class Main {
 
 #### 6. Bridge Pattern
 Bridge pattern decouples an abstraction from its implementation so that the two can vary independently.
+
+![alt text](./files/images/design_patterns/bridge_pattern.png)
 
 Key Components:
 1. Abstraction: This is the high-level interface that defines the abstract methods or operations that the clients will use.
@@ -1154,29 +1208,38 @@ public class Main {
 #### 2. Mediator Pattern
 The Mediator Pattern is a behavioral design pattern that promotes loose coupling between objects by centralizing communication through a mediator. Instead of objects communicating directly with each other, they interact via a mediator, reducing dependencies and improving maintainability.
 
+![alt text](./files/images/design_patterns/mediator_pattern.png)
+
 Implementation:
 
 ```java
 // Mediator interface
-interface AirTrafficControl {
-    void registerAircraft(Aircraft aircraft);
-    void sendMessage(String message, Aircraft sender);
+interface ChatMediator {
+    void sendMessage(String message, User user);
+    void addUser(User user);
 }
 ```
 
 ```java
 // Concrete Mediator
-class ATCTower implements AirTrafficControl {
-    private List<Aircraft> aircraftList = new ArrayList<>();
-    @Override
-    public void registerAircraft(Aircraft aircraft) {
-        aircraftList.add(aircraft);
+class ChatRoom implements ChatMediator {
+    private List<User> users;
+
+    public ChatRoom() {
+        this.users = new ArrayList<>();
     }
+
     @Override
-    public void sendMessage(String message, Aircraft sender) {
-        for (Aircraft aircraft : aircraftList) {
-            if (aircraft != sender) {
-                aircraft.receiveMessage(message);
+    public void addUser(User user) {
+        users.add(user);
+    }
+
+    @Override
+    public void sendMessage(String message, User sender) {
+        for (User user : users) {
+            // Don’t send message to the sender
+            if (user != sender) {
+                user.receive(message, sender.getName());
             }
         }
     }
@@ -1184,50 +1247,41 @@ class ATCTower implements AirTrafficControl {
 ```
 
 ```java
-// Colleague
-abstract class Aircraft {
-    protected AirTrafficControl atc;
+// Colleague (Abstract)
+abstract class User {
+    protected ChatMediator mediator;
     protected String name;
 
-    public Aircraft(AirTrafficControl atc, String name) {
-        this.atc = atc;
+    public User(ChatMediator mediator, String name) {
+        this.mediator = mediator;
         this.name = name;
-        atc.registerAircraft(this);
     }
+
+    public String getName() {
+        return name;
+    }
+
     public abstract void send(String message);
-    public abstract void receiveMessage(String message);
+    public abstract void receive(String message, String sender);
 }
 ```
 
 ```java
 // Concrete Colleague
-class Boeing737 extends Aircraft {
-    public Boeing737(AirTrafficControl atc, String name) {
-        super(atc, name);
+class ChatUser extends User {
+    public ChatUser(ChatMediator mediator, String name) {
+        super(mediator, name);
     }
 
     @Override
     public void send(String message) {
         System.out.println(name + " sends: " + message);
-        atc.sendMessage(message, this);
+        mediator.sendMessage(message, this);
     }
+
     @Override
-    public void receiveMessage(String message) {
-        System.out.println(name + " receives: " + message);
-    }
-}
-class AirbusA320 extends Aircraft {
-    public AirbusA320(AirTrafficControl atc, String name) {
-        super(atc, name);
-    }
-    @Override
-    public void send(String message) {
-        System.out.println(name + " sends: " + message);
-        atc.sendMessage(message, this);
-    }
-    @Override
-    public void receiveMessage(String message) {
-        System.out.println(name + " receives: " + message);
+    public void receive(String message, String sender) {
+        System.out.println(name + " receives from " + sender + ": " + message);
     }
 }
 ```
@@ -1235,19 +1289,41 @@ class AirbusA320 extends Aircraft {
 // Client Code
 public class MediatorPatternDemo {
     public static void main(String[] args) {
-        AirTrafficControl atcTower = new ATCTower();
-        
-        Aircraft boeing = new Boeing737(atcTower, "Boeing 737");
-        Aircraft airbus = new AirbusA320(atcTower, "Airbus A320");
-        
-        boeing.send("Requesting permission to land.");
-        airbus.send("Holding position at 10,000 feet.");
+        ChatMediator chatRoom = new ChatRoom();
+
+        User user1 = new ChatUser(chatRoom, "Arpan");
+        User user2 = new ChatUser(chatRoom, "Riya");
+        User user3 = new ChatUser(chatRoom, "Karan");
+
+        chatRoom.addUser(user1);
+        chatRoom.addUser(user2);
+        chatRoom.addUser(user3);
+
+        user1.send("Hello everyone!");
+        user2.send("Hi Arpan!");
     }
 }
 ```
 
+```yaml
+## Output
+Arpan sends: Hello everyone!
+Riya receives from Arpan: Hello everyone!
+Karan receives from Arpan: Hello everyone!
+
+Riya sends: Hi Arpan!
+Arpan receives from Riya: Hi Arpan!
+Karan receives from Riya: Hi Arpan!
+
+```
+
+Without the mediator (ChatRoom), each user would have to directly maintain references to every other user — a tangled web of dependencies.
+The mediator centralizes all communication, making the system easier to maintain and extend.
+
 #### 3. Chain of Responsibility
 The Chain of Responsibility design pattern is a behavioral pattern that allows an object to pass a request along a chain of potential handlers until it is handled by an appropriate object. This pattern promotes loose coupling between the sender of a request and its receivers, and it allows multiple objects to have a chance to handle the request without explicitly specifying the receiver.
+
+![alt text](./files/images/design_patterns/chain_of_responsibility_pattern.png)
 
 Components:
 1. Handler: The Handler is an interface or abstract class that defines the common interface for handling requests. It typically includes a method like handleRequest().
@@ -1613,7 +1689,7 @@ public class Main {
 #### 7. State Design Pattern
 The State Pattern allows an object to change its behavior based on its current state. Instead of using large if-else or switch-case blocks to handle different states, the behavior is encapsulated into state classes. The context delegates behavior to the current state object.
 
-![State Design Pattern](./files/images/state.png)
+![State Design Pattern](./files/images/design_patterns/state_pattern.png)
 
 Components:
 1. State Interface: Defines the common behaviour for all states.
@@ -1677,6 +1753,8 @@ public class StatePatternDemo {
 
 #### 8. Visitor Design Pattern
 The Visitor Pattern is a behavioral design pattern that allows adding new operations to a class hierarchy without modifying existing code. It achieves this by separating an algorithm from the object structure it operates on.
+
+![alt text](./files/images/design_patterns/visitor_pattern.png)
 
 Implementation:
 ```java
@@ -1789,6 +1867,8 @@ The Interpreter Pattern is a behavioral design pattern used to define a grammar 
 #### 10. Iterator Design Pattern
 The Iterator Pattern is a behavioral design pattern that provides a standard way to access elements of a collection sequentially without exposing its underlying structure. This pattern is widely used in traversing lists, trees, and other collections.
 
+![alt text](./files/images/design_patterns/iterator_pattern.png)
+
 Components:
 1. Iterator Interface: It provides methods to traverse through a collection. It includes:
     * `hasNext()`: Ensures iteration stops when no elements are left.
@@ -1877,6 +1957,89 @@ public class IteratorPatternDemo {
 
 #### 11. Memento Design Pattern
 The Memento Pattern is a behavioral design pattern that allows an object to restore its previous state without exposing its internal structure. This is particularly useful for implementing undo/redo functionalities in applications.
+
+![alt text](./files/images/design_patterns/memento_pattern.png)
+
+```java
+// Memento
+class TextEditorMemento {
+    private final String state;
+
+    public TextEditorMemento(String state) {
+        this.state = state;
+    }
+
+    public String getState() {
+        return state;
+    }
+}
+```
+
+```java
+// Originator
+class TextEditor {
+    private String content;
+
+    public void setContent(String content) {
+        this.content = content;
+        System.out.println("Content set to: " + content);
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    // Save the current state
+    public TextEditorMemento save() {
+        return new TextEditorMemento(content);
+    }
+
+    // Restore previous state
+    public void restore(TextEditorMemento memento) {
+        content = memento.getState();
+        System.out.println("Content restored to: " + content);
+    }
+}
+```
+
+```java
+class Caretaker {
+    private Stack<TextEditorMemento> history = new Stack<>();
+
+    public void saveState(TextEditor editor) {
+        history.push(editor.save());
+    }
+
+    public void undo(TextEditor editor) {
+        if (!history.isEmpty()) {
+            editor.restore(history.pop());
+        } else {
+            System.out.println("No previous states to restore.");
+        }
+    }
+}
+```
+
+```java
+// Client
+public class MementoDemo {
+    public static void main(String[] args) {
+        TextEditor editor = new TextEditor();
+        Caretaker caretaker = new Caretaker();
+
+        editor.setContent("Version 1");
+        caretaker.saveState(editor);
+
+        editor.setContent("Version 2");
+        caretaker.saveState(editor);
+
+        editor.setContent("Version 3");
+
+        caretaker.undo(editor); // restores to Version 2
+        caretaker.undo(editor); // restores to Version 1
+    }
+}
+```
 
 
 #### Additional Resources
