@@ -286,7 +286,7 @@ class Child extends Parent {
 
 `final` Class:
 * A class declared as final cannot be subclassed (inherited).
-* Used to prevent the clas from being extended and to preserve its implementation.
+* Used to prevent the class from being extended and to preserve its implementation.
 * A final class can still extend another class, but nothing can extend it.
 
 ```java
