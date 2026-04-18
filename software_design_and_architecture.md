@@ -275,7 +275,12 @@ public class ThreadSafeSingleton {
 ```java
 public class BillPughSingleton {
 
-    private BillPughSingleton(){}
+    private BillPughSingleton(){
+        // Prevent reflection attack
+        if (SingletonHelper.INSTANCE != null) {
+            throw new RuntimeException("Use getInstance()");
+        }
+    }
 
     private static class SingletonHelper {
         private static final BillPughSingleton INSTANCE = new BillPughSingleton();
@@ -286,6 +291,14 @@ public class BillPughSingleton {
     }
 }
 ```
+
+Common problems (Anti-patterns) in Singleton:
+
+1. Singleton behaves like a global variable: *Hard to track who modified it.*
+2. Tight Coupling: Hard to replace with mocks. Difficult to test
+3. Violates Single Responsibility Principle
+4. Concurency issues: If improperly implemented, then it leads to race condition.
+5. Reflection attack.
 
 #### 2. Factory
 The factory design pattern is used when we have a superclass with multiple sub-classes and based on input, we need to return one of the sub-class. This pattern takes out the responsibility of the instantiation of a class from the client program to the factory class.
@@ -354,6 +367,7 @@ In the Abstract Factory pattern, we get rid of if-else block and have a factory 
 ![alt text](./files/images/design_patterns/abstract_factory_pattern.png)
 
 ```java
+
 // Product interface
 interface Pizza {
     void prepare();
@@ -505,10 +519,89 @@ public class Client {
 }
 ```
 
+We can use "Step Builder Pattern" to enforce the fields to be set in specific order. Each step is represented by an interface. Each method returns the next step interface, ensuring the caller follows the required order at compile time.
+
+```java
+public class DatabaseConnection {
+
+  private final String host;
+  private final int port;
+  private final String databaseName;
+
+  private DatabaseConnection(Builder builder) {
+    this.host = builder.host;
+    this.port = builder.port;
+    this.databaseName = builder.databaseName;
+  }
+
+  // Step 1
+  public interface HostStep {
+    PortStep host(String host);
+  }
+
+  // Step 2
+  public interface PortStep {
+    DbStep port(int port);
+  }
+
+  // Step 3
+  public interface DbStep {
+    BuildStep databaseName(String dbName);
+  }
+
+  // Final Step
+  public interface BuildStep {
+    DatabaseConnection build();
+  }
+
+  // Builder implements all steps
+  public static class Builder implements HostStep, PortStep, DbStep, BuildStep {
+    private String host;
+    private int port;
+    private String databaseName;
+
+    @Override
+    public PortStep host(String host) {
+      this.host = host;
+      return this;
+    }
+
+    @Override
+    public DbStep port(int port) {
+      this.port = port;
+      return this;
+    }
+
+    @Override
+    public BuildStep databaseName(String dbName) {
+      this.databaseName = dbName;
+      return this;
+    }
+
+    @Override
+    public DatabaseConnection build() {
+      return new DatabaseConnection(this);
+    }
+  }
+
+  public static HostStep builder() {
+    return new Builder();
+  }
+}
+```
+
+
 #### 5. Prototype
 Prototype design pattern is used when the Object creation is a costly affair and requires a lot of time and resources and you have a similar object already existing. Prototype pattern provides a mechanism to copy the original object to a new object and then modify it according to our needs. Prototype design pattern uses java cloning to copy the object.
 
 Prototype design pattern mandates that the Object which you are copying should provide the copying feature. It should not be done by any other class. However whether to use shallow or deep copy of the Object properties depends on the requirements and its a design decision.
+
+Prefer to implement a copy constructor over implmenting Cloneable interface as Cloneable interface have design issues:
+1. Cloneable interface is a marker interface with no methods. We have to manually override the clone method.
+2. clone() is protected in Object. Not accessible unless we override it.
+3. Requires casting because return type is Object.
+4. Shallow copy by default
+5. Copies object without calling constructor.
 
 ![alt text](./files/images/design_patterns/prototype_pattern.png)
 
